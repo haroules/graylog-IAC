@@ -1,6 +1,6 @@
 # Define global variables
 global str_admintoken           # admin token passed on CLI
-global str_pth_cwd              # keep track of where we are on the fs
+#global str_pth_cwd              # keep track of where we are on the fs
 global bool_verbose             # suppress verbose output
 global list_config_directories   # harcoded list of config and data directories
 
@@ -30,9 +30,9 @@ global str_pth_schema_extractor
 global str_pth_schema_stream 
 
 # intialize to empty - they get assigned in gralog_helpers:set_global_vars
-bool_verbose = True
+bool_verbose = ""
 str_admintoken = ""  
-str_pth_cwd = ""
+#str_pth_cwd = ""
 str_pth_extrctr_cfg = ""
 str_pth_host_cfg_dir = "" 
 str_pth_host_cfg_template = "" 

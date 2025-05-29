@@ -1,0 +1,38 @@
+{
+  "index_set_id": "67f33045a8174446ef72af85",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "host2 gelf docker general",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "host2.example.com",
+      "inverted": false
+    },
+    {
+      "field": "container_name",
+      "description": "",
+      "type": 5,
+      "value": "",
+      "inverted": false
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "value": "host2-gelf-docker",
+      "inverted": false
+    },
+    {
+      "field": "container_name",
+      "description": "",
+      "type": 6,
+      "value": "graylog",
+      "inverted": true
+    }
+  ],
+  "title": "host2-gelf-docker-general-stream",
+  "content_pack": null
+}

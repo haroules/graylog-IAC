@@ -1,0 +1,31 @@
+{
+  "index_set_id": "67f33045a8174446ef72af89",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "default stream for host1.example.com",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "host1.example.com",
+      "inverted": false
+    },
+    {
+      "field": "message",
+      "description": "",
+      "type": 6,
+      "value": "[UFW BLOCK]",
+      "inverted": true
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "value": "host1",
+      "inverted": false
+    }
+  ],
+  "title": "host1-default-stream",
+  "content_pack": null
+}

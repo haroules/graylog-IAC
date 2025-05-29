@@ -1,24 +1,13 @@
 # from pyenv
+import os
 from jqpy import jq
 import json
-import os
 import requests
 import sys
-import validators
-
+from typing import Union
 # from source
-from graylog_helpers import set_global_vars
-from graylog_helpers import exit_with_message
-from graylog_helpers import contains_sublist
-from graylog_helpers import check_graylog_baseurl
-from graylog_helpers import test_api_token
-from graylog_helpers import make_config_backup
-from graylog_verify import verify_hostconfigfiles_schema 
-from graylog_verify import verify_hostconfigfiles_deps_schema
-from graylog_verify import verify_configfiles_filesystem
-from graylog_verify import verify_hostconfig_integrity 
-from graylog_verify import verify_hostname_in_config
-from graylog_verify import verify_stream_rules
+from src.graylog_helpers import exit_with_message
+from src.graylog_helpers import contains_sublist
 import graylog_global_vars
 
 # pyjq doesn't compile for python3, jqpy python binding only has filter not replace
@@ -39,64 +28,44 @@ def usage():
     print("\t-Setting verbose to False will supress output.")
     sys.exit(1)
 
-def parse_args():
-    # parse and validate inputs to this script
-    # should be of the form python3 graylog-setup.py <52 char alphanumeric token> <valid url of graylog instance> <True|False optional>
-    # if all checks pass set global vars 
-    # authentication is passed via get or post headers
-    print("\nParsing arguments and validating the inputs.")
+def check_args(args :list) -> Union[str, list[str,str,str,str], list[str,str,str,bool,str]]:
+    # validate inputs to this script 
+    # input to function is the arguments passed to the script at runtime
+    # return args with current working directory appended or
+    # return args with verbose flag set as bool and with current working directory appended
+    print("Checking arguments and validating the inputs.")
     try:
-        # check 2 or 3 args passed, argv has script name as arg so total should be 3 or 4
-        if ((len(sys.argv) < 3) or (len(sys.argv) > 4 )):
-            print("[Error] Wrong number of script arguments. Number of args passed:", len(sys.argv) - 1) 
-            usage()
-        # check token is 52 characters
-        if(len(sys.argv[1]) != 52): 
-            print("[Error] Token was wrong length. Length was:", len(sys.argv[1]) )
-            usage()
-        # check token is alpha numeric characters only
-        if( not (sys.argv[1].isalnum())):
-            print("[Error] Token had non alphanumeric characters.")
-            usage()
-        # check url has valid form
-        match = validators.url(sys.argv[2])
-        if(not(bool(match))):
-            print("[Error] URL appears malformed: ", sys.argv[2])
-            usage()
-        # check optional Verbose flag set to TrUe or fAlSe
-        # argument must be 4 or 5 chars (true or false)
-        # is there a third argument
-        if(len(sys.argv) == 4):
-            # is it a string
-            if isinstance(sys.argv[3],str):
-                # is the string 4 or 5 chars
-                if((len(sys.argv[3]) > 3) and (len(sys.argv[3]) < 6)):
-                    # put string to all lower case to ease match TRUE or true or TrUe should all work
-                    str_arg_three = sys.argv[3].lower()
-                    match str_arg_three:
-                        case "true":
-                            graylog_global_vars.bool_verbose=True
-                        case "false":
-                            graylog_global_vars.bool_verbose=False
-                            print("Verbose set to false suppressing some output")
-                        case _:
-                            print("[Error] Optional 3rd argument must be string: true or false")
-                            usage()
-                else:
-                    print("[Error] Optional 3rd argument must be string: true or false")
-                    usage()
+        if ((len(args) < 3) or (len(args) > 4 )):   # check 2 or 3 args passed, argv has script name as arg so total should be 3 or 4
+            return(f"[ERROR] Wrong number of script arguments. Number of args passed:{len(args) - 1}") 
+        elif(len(args[1]) != 52):  # check token is 52 characters
+            return(f"[ERROR] Token was wrong length. Length was:{len(args[1])}")            
+        elif( not (args[1].isalnum())):  # check token is alpha numeric characters only
+            return(f"[ERROR] Token had non alphanumeric characters.")
+        # check optional Verbose flag set to true or false [case insensitive]
+        elif(len(args) == 4):          # is there a third argument
+            if( isinstance(args[3],str) and len(args[3]) > 3 and len(args[3]) < 6):  # must be string of 4 or 5 chars (true or false)
+                str_arg_three = args[3].lower() # put string to all lower case to ease match 
+                match str_arg_three:
+                    case "true":
+                        args[3]=True
+                    case "false":
+                        args[3]=False
+                    case _:
+                        return(f"[ERROR] Optional 3rd argument must be string: true or false.")
             else:
-                print("[Error] Optional 3rd argument must be string: true or false")
-                usage()
+                return(f"[ERROR] Optional 3rd argument must be string: true or false.")
+        # get current directory, and then get parent folder of that for cwd, then append path to args
+        args.append(os.path.dirname(os.getcwd()))
+        
     except Exception as e:
-        print(f"[Error] Unknown error occurred: {e}")
-        sys.exit(1)        
-    # passed checks return vars
-    graylog_global_vars.str_admintoken = sys.argv[1]
-    graylog_global_vars.str_graylogbase_url = sys.argv[2]
-    # get current directory, and then get parent folder of that 
-    graylog_global_vars.str_pth_cwd = os.path.dirname(os.getcwd())
-    print("[Done] Parsing arguments and validating the inputs.\n")
+        print(f"[ERROR] Unknown error occurred in function checkargs: {e}")
+        sys.exit(1)
+    except os.error as e:
+        print(f"[ERROR] An OSError occurred getting current working directory: {e}")
+        sys.exit(1)
+
+    print("[Done] Checking arguments and validating the inputs.\n")
+    return(args)
 
 def create_indices():
     # build list of definition files in directory and count them
@@ -124,7 +93,7 @@ def create_indices():
             int_index_file_count += 1
         # Verify index config check completed ok, later functions have dependencies on index names/ids. Exit on 0 found.
         if(int_index_file_count == 0):
-            exit_with_message("[Error]  No config files found for creating indexes. Exiting.",1)
+            exit_with_message("[ERROR]  No config files found for creating indexes. Exiting.",1)
         else:
             if(graylog_global_vars.bool_verbose): print("  ", int_index_file_count, "Index config files to process.")
         # config files exist, now process the list of them    
@@ -143,23 +112,26 @@ def create_indices():
                         if(graylog_global_vars.bool_verbose): print("      Index:",str_index_name, "Id:",str_index_id, "was created")
                         int_index_processed_count += 1
                     case _:
-                        print("[Error] Create index from file", str_index_input_file, "failed with error code:",index_post_response.status_code,"Message:",index_post_response.text)
+                        print("[ERROR] Create index from file", str_index_input_file, "failed with error code:",index_post_response.status_code,"Message:",index_post_response.text)
                         sys.exit(1)
+    except FileNotFoundError as e:
+        print(f"Error: File or directory not found: {e}")
+        sys.exit(1)
     except os.error as e:
-        print(f"[Error] An OSError occurred verifying config directories or files: {e}")
+        print(f"[ERROR] An OSError occurred verifying config directories or files: {e}")
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"[Error] There was a problem decoding json: {e}")
+        print(f"[ERROR] There was a problem decoding json: {e}")
         sys.exit(1)
     except requests.exceptions.RequestException as e:
-        print(f"[Error] Request error: {e}")
+        print(f"[ERROR] Request error: {e}")
         sys.exit(1)
     except Exception as e:
-        print(f"[Error] Unknown error occurred: {e}")
+        print(f"[ERROR] Unknown error occurred: {e}")
         sys.exit(1)
     # verify we did something for every index config file that exists
     if(int_index_file_count != int_index_processed_count):
-        print("[Error] Processing indexes, config file count differed from processed count. File count:",int_index_file_count,"Processed count:",int_index_processed_count)
+        print("[ERROR] Processing indexes, config file count differed from processed count. File count:",int_index_file_count,"Processed count:",int_index_processed_count)
         sys.exit(1)
     else:
         print("[Done] processing indexes.\n")
@@ -196,7 +168,7 @@ def create_inputs():
         # get nodeid from api to replace in config files
         node_id_response = requests.get(graylog_global_vars.str_node_id_url, headers=graylog_global_vars.dict_get_headers) 
         if (node_id_response.status_code != 200):
-            print("[Error] API call to:",graylog_global_vars.str_node_id_url,"Failed.")
+            print("[ERROR] API call to:",graylog_global_vars.str_node_id_url,"Failed.")
             sys.exit(1)
         json_node_id = jq('.node_id',json.loads(node_id_response.text))
         # from list of input files paths, load content of file to var and replace node id in content
@@ -215,7 +187,7 @@ def create_inputs():
                 with open(str_input_file_path, "w") as file:  # write back to file
                     json.dump(input_json_content,file, indent=2)
             else:
-                print("[Error] Couldn't update config file", str_input_file_path, "with", str_node_id)
+                print("[ERROR] Couldn't update config file", str_input_file_path, "with", str_node_id)
                 sys.exit(1)
             # create list of input titles that exist already
             inputs_get_response = requests.get(graylog_global_vars.str_inputs_url, headers=graylog_global_vars.dict_get_headers)
@@ -232,23 +204,29 @@ def create_inputs():
                         if(graylog_global_vars.bool_verbose): print("    InputTitle:",input_name_json,"InputID:",json_created_input_id, "Created ")
                         int_input_processed_count += 1
                     case _:
-                        print("[Error] Create input failed with error code:",inputs_post_response.status_code,"Message:",inputs_post_response.text)
+                        print("[ERROR] Create input failed with error code:",inputs_post_response.status_code,"Message:",inputs_post_response.text)
+    except FileNotFoundError as e:
+        print(f"Error: File or directory not found: {e}")
+        sys.exit
+    except FileNotFoundError as e:
+        print(f"Error: File or directory not found: {e}")
+        sys.exit
     except os.error as e:
-        print(f"[Error] An OSError occurred verifying config directories or files: {e}")
+        print(f"[ERROR] An OSError occurred verifying config directories or files: {e}")
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"[Error] There was a problem decoding json: {e}")
+        print(f"[ERROR] There was a problem decoding json: {e}")
         sys.exit(1)
     except requests.exceptions.RequestException as e:
-        print(f"[Error] Request error: {e}")
+        print(f"[ERROR] Request error: {e}")
         sys.exit(1)
     except Exception as e:
-        print(f"[Error] Unknown error occurred: {e}")
+        print(f"[ERROR] Unknown error occurred: {e}")
         sys.exit(1)
 
     # verify we did something for every input config file that exists
     if(int_input_file_count != int_input_processed_count ):
-        print("[Error] processing inputs, config file count differed from processed count. Files:",int_input_file_count,"Processed:",int_input_processed_count)
+        print("[ERROR] processing inputs, config file count differed from processed count. Files:",int_input_file_count,"Processed:",int_input_processed_count)
     else:
         print("[Done] Processing inputs.\n")
 
@@ -278,26 +256,26 @@ def create_static_fields():
         # unlikely to occur (previous steps would fail) 
         # someone edits ui while script processing and deletes inputs
         if(json_inputs_count == 0):
-            exit_with_message("[Error] No inputs found. Exiting",1)
+            exit_with_message("[ERROR] No inputs found. Exiting",1)
         json_titles_found = jq('.inputs[] | [ .title,.id ]',data=json.loads(get_inputs_response.text))
         for static_field_keypair in json_titles_found:
             str_static_field_url = graylog_global_vars.str_inputs_url + "/" + static_field_keypair[1] + "/staticfields"
             json_static_payload = '{"key":"input","value":"' + static_field_keypair[0] + '"}'
             create_static_field_response = requests.post(str_static_field_url, headers=graylog_global_vars.dict_post_headers, json=json.loads(json_static_payload))
             if(create_static_field_response.status_code != 201):
-                print("[Error] Add static field failed with error code:",create_static_field_response.status_code,"Message:",create_static_field_response.text)
+                print("[ERROR] Add static field failed with error code:",create_static_field_response.status_code,"Message:",create_static_field_response.text)
             else:
                 if(graylog_global_vars.bool_verbose): print("  Static field added:", json_static_payload)
                 int_static_created_count += 1
 
     except json.JSONDecodeError as e:
-        print(f"[Error] There was a problem decoding json: {e}")
+        print(f"[ERROR] There was a problem decoding json: {e}")
         sys.exit(1)
     except requests.exceptions.RequestException as e:
-        print(f"[Error] Request error: {e}")
+        print(f"[ERROR] Request error: {e}")
         sys.exit(1)
     except Exception as e:
-        print(f"[Error] Unknown error occurred: {e}")
+        print(f"[ERROR] Unknown error occurred: {e}")
         sys.exit(1)
     
     # verify we created static field for every input we found
@@ -365,7 +343,7 @@ def create_extractors():
                     str_inputid = jq(str_jqfilter,data=json.loads(get_inputs_response.text),raw_output=True).text.strip('"')
                     for xtrctr in list_extractors:
                         # build url to query extractors of an input from its id
-                        str_xtractr_url = graylog_global_vars.str_graylogbase_url + "/system/inputs/" + str_inputid + "/extractors"
+                        str_xtractr_url = graylog_global_vars.str_inputs_url + "/" + str_inputid + "/extractors"
                         get_xtractr_response = requests.get(str_xtractr_url, headers=graylog_global_vars.dict_get_headers)
                         # check if the response from input by id already has extractors defined in a list
                         with open(os.path.join(graylog_global_vars.str_pth_extrctr_cfg,xtrctr), "r") as file:   
@@ -382,7 +360,7 @@ def create_extractors():
                                 xtrctr_add_response = requests.post(str_xtractr_url, headers=graylog_global_vars.dict_post_headers,json=json.load(xtrctr_config_file))
                                 # check if we were succesful in adding extractor to input
                                 if(xtrctr_add_response.status_code != 201): # this seems goofy should success be 200
-                                    print("[Error] Add extractor failed with error code:",xtrctr_add_response.status_code,"Message:",xtrctr_add_response.text)            
+                                    print("[ERROR] Add extractor failed with error code:",xtrctr_add_response.status_code,"Message:",xtrctr_add_response.text)            
                                     sys.exit(1)
                                 else:
                                     if(graylog_global_vars.bool_verbose): print("    Extractor added:",xtrctr_add_response.text)
@@ -390,16 +368,18 @@ def create_extractors():
                                     int_count_xtrctr_ops += 1
                     # check that total count of extractors in config file matches number we iterated on
                     if(int_count_xtrctr_ops != int_tot_xtrctrs_in_configset):
-                        print("[Error] Extractor operations performed:",int_count_xtrctr_ops, "was less than expected count:",int_tot_xtrctrs_in_configset )
-
+                        print("[ERROR] Extractor operations performed:",int_count_xtrctr_ops, "was less than expected count:",int_tot_xtrctrs_in_configset )
+    except FileNotFoundError as e:
+        print(f"Error: File or directory not found: {e}")
+        sys.exit
     except requests.exceptions.RequestException as e:
         print(f"Request error: {e}")
         sys.exit(1)
     except os.error as e:
-        print(f"[Error] An OSError occurred verifying config directories or files: {e}")
+        print(f"[ERROR] An OSError occurred verifying config directories or files: {e}")
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"[Error] There was a problem decoding json: {e}")
+        print(f"[ERROR] There was a problem decoding json: {e}")
         sys.exit(1)
     except Exception as e:
         print(f"Unknown error occurred: {e}")
@@ -461,7 +441,7 @@ def create_streams():
                     with open(str_pth_stream_config_file, "w") as file:
                         json.dump(dict_stream_config,file, indent=2)
                 else:
-                    print("[Error] Couldn't update stream config file", str_pth_stream_config_file)
+                    print("[ERROR] Couldn't update stream config file", str_pth_stream_config_file)
                     sys.exit(1)
                 # check if stream already exists create otherwise and start
                 stream_response=requests.get(graylog_global_vars.str_streams_url, headers=graylog_global_vars.dict_get_headers)
@@ -479,39 +459,20 @@ def create_streams():
                     # newly created streams don't autostart, so start stream
                     start_stream_url = graylog_global_vars.str_streams_url + "/" + new_stream_id + "/resume"
                     start_stream_response=requests.post(start_stream_url,headers=graylog_global_vars.dict_post_headers)
-
+    except FileNotFoundError as e:
+        print(f"Error: File or directory not found: {e}")
+        sys.exit
     except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
+        print(f"[ERROR] Request error: {e}")
         sys.exit(1)
     except os.error as e:
-        print(f"[Error] An OSError occurred verifying config directories or files: {e}")
+        print(f"[ERROR] An OSError occurred verifying config directories or files: {e}")
         sys.exit(1)
     except json.JSONDecodeError as e:
-        print(f"[Error] There was a problem decoding json: {e}")
+        print(f"[ERROR] There was a problem decoding json: {e}")
         sys.exit(1)
     except Exception as e:
-        print(f"Unknown error occurred: {e}")
+        print(f"[ERROR] Unknown error occurred: {e}")
         sys.exit(1)
 
     print("[Done] Processing streams.\n")
-
-def main():
-    parse_args()
-    set_global_vars()
-    check_graylog_baseurl()
-    test_api_token()
-    verify_configfiles_filesystem()
-    verify_hostconfigfiles_schema()
-    verify_hostconfigfiles_deps_schema()
-    verify_hostconfig_integrity()
-    verify_hostname_in_config()
-    verify_stream_rules()
-    #make_config_backup()
-    create_indices()
-    create_inputs()
-    create_static_fields()
-    create_extractors()
-    create_streams()
-    print("Script completed.")
-
-main()

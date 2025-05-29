@@ -1,0 +1,38 @@
+{
+  "index_set_id": "67f33045a8174446ef72af75",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "host2 firewalld stream",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "host2.example.com",
+      "inverted": false
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "value": "host2-rsyslog",
+      "inverted": false
+    },
+    {
+      "field": "application_name",
+      "description": "",
+      "type": 1,
+      "value": "kernel",
+      "inverted": false
+    },
+    {
+      "field": "message",
+      "description": "",
+      "type": 6,
+      "value": "_DROP:",
+      "inverted": false
+    }
+  ],
+  "title": "host2-firewalld-stream",
+  "content_pack": null
+}

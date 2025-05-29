@@ -1,0 +1,26 @@
+{
+  "hostname" : "host1.example.com",
+  "config_sets_total" : 2,
+  "config_sets" : [
+    {
+       "index_config_file" : "index_host1_default.json",
+       "index_title" : "host1-default-index",
+       "input_config_file" : "input_host1_rsyslog.json",
+       "input_title" : "host1",
+       "extractors" : [],
+       "extractors_total" : 0,
+       "stream_config_file" : "stream_host1_default.json",
+       "stream_title" : "host1-default-stream"
+    },
+    {
+      "index_config_file" : "index_host1_UFW.json",
+      "index_title" : "host1-UFW-index",
+      "input_config_file" : "input_host1_rsyslog.json",
+      "input_title" : "host1",
+      "extractors" : [],
+      "extractors_total" : 0,
+      "stream_config_file" : "stream_host1_ufw.json",
+      "stream_title" : "host1-ufw-stream"
+   }
+  ]
+}

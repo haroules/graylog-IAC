@@ -1,0 +1,31 @@
+{
+  "index_set_id": "67f33045a8174446ef72af71",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "default stream for firewall.example.com",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "firewall.example.com",
+      "inverted": false
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "inverted": false,
+      "value": "firewall-rsyslog-udp"
+    },
+    {
+      "field": "application_name",
+      "description": "",
+      "type": 1,
+      "inverted": true,
+      "value": "filterlog"
+    }
+  ],
+  "title": "firewall-default-stream",
+  "content_pack": null
+}

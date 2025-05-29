@@ -1,0 +1,156 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "shards": {
+          "type": "integer"
+        },
+        "replicas": {
+          "type": "integer"
+        },
+        "rotation_strategy_class": {
+          "type": "string"
+        },
+        "rotation_strategy": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "index_lifetime_min": {
+                  "type": "string"
+                },
+                "index_lifetime_max": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type",
+                "index_lifetime_min",
+                "index_lifetime_max"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "retention_strategy_class": {
+          "type": "string"
+        },
+        "retention_strategy": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "max_number_of_indices": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "type",
+                "max_number_of_indices"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "data_tiering": {
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string"
+                },
+                "index_lifetime_min": {
+                  "type": "string"
+                },
+                "index_lifetime_max": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "index_lifetime_min",
+                "index_lifetime_max"
+              ],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "can_be_default": {
+          "type": "boolean"
+        },
+        "index_prefix": {
+          "type": "string"
+        },
+        "index_analyzer": {
+          "type": "string"
+        },
+        "index_optimization_max_num_segments": {
+          "type": "integer"
+        },
+        "index_optimization_disabled": {
+          "type": "boolean"
+        },
+        "field_type_refresh_interval": {
+          "type": "integer"
+        },
+        "index_template_type": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "field_type_profile": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "use_legacy_rotation": {
+          "type": "boolean"
+        },
+        "default": {
+          "type": "boolean"
+        },
+        "writable": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "shards",
+        "replicas",
+        "rotation_strategy_class",
+        "rotation_strategy",
+        "retention_strategy_class",
+        "retention_strategy",
+        "data_tiering",
+        "title",
+        "description",
+        "can_be_default",
+        "index_prefix",
+        "index_analyzer",
+        "index_optimization_max_num_segments",
+        "index_optimization_disabled",
+        "field_type_refresh_interval",
+        "index_template_type",
+        "field_type_profile",
+        "use_legacy_rotation",
+        "default",
+        "writable"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}

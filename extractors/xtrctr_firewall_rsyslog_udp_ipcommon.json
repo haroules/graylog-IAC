@@ -1,0 +1,21 @@
+{
+  "title": "ipcommon",
+  "extractor_type": "regex",
+  "converters": [
+    {
+      "type": "csv",
+      "config": {
+        "column_header": "rule-number,sub-rule-number,anchor,tracker,real-interface,reason,action,direction,ip-version"
+      }
+    }
+  ],
+  "order": 0,
+  "cursor_strategy": "copy",
+  "source_field": "message",
+  "target_field": "ip_common_data",
+  "extractor_config": {
+    "regex_value": "^(([^,]*,){8}([^,]*)),"
+  },
+  "condition_type": "regex",
+  "condition_value": "^(([^,]*,){8}([^,]*)),"
+}

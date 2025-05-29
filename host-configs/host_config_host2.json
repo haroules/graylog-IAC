@@ -1,0 +1,51 @@
+{
+  "hostname" : "host2.example.com",
+  "config_sets_total" : 4,
+  "config_sets" : [
+    {
+       "index_config_file" : "index_host2_default.json",
+       "index_title" : "host2-default-index",
+       "input_config_file" : "input_host2_rsyslog.json",
+       "input_title" : "host2-rsyslog",
+       "extractors" : [],
+       "extractors_total" : 0,
+       "stream_config_file" : "stream_host2_default.json",
+       "stream_title" : "host2-default-stream"
+    },
+    {
+      "index_config_file" : "index_host2_docker_general.json",
+      "index_title" : "host2-gelf-docker-general-index",
+      "input_config_file" : "input_host2_rsyslog.json",
+      "input_title" : "host2-gelf-docker",
+      "extractors" : [],
+      "extractors_total" : 0,
+      "stream_config_file" : "stream_host2_docker_general.json",
+      "stream_title" : "host2-gelf-docker-general-stream"
+   },
+   {
+      "index_config_file" : "index_host2_docker_graylog.json",
+      "index_title" : "host2-gelf-docker-graylog-index",
+      "input_config_file" : "input_host2_gelf.json",
+      "input_title" : "host2-gelf-docker",
+      "extractors" : [],
+      "extractors_total" : 0,
+      "stream_config_file" : "stream_host2_docker_graylog.json",
+      "stream_title" : "host2-gelf-docker-graylog-stream"
+    },
+    {
+      "index_config_file" : "index_host2_firewalld.json",
+      "index_title" : "host2-firewalld-index",
+      "input_config_file" : "input_host2_rsyslog.json",
+      "input_title" : "host2-rsyslog",
+      "extractors" : [
+        {
+          "extractor_config_file": "xtrctr_host2_rsyslog_firewalld.json",
+          "extractor_title": "firewalld"
+        }
+      ],
+      "extractors_total" : 1,
+      "stream_config_file" : "stream_host2_firewalld.json",
+      "stream_title" : "host2-firewalld-stream"
+    }
+  ]
+}

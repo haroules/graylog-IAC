@@ -1,0 +1,51 @@
+{
+  "hostname" : "firewall.example.com",
+  "config_sets_total" : 2,
+  "config_sets" : [
+        {
+            "index_config_file" : "index_firewall_default.json",
+            "index_title" : "firewall-default-index",
+            "input_config_file" : "input_firewall_rsyslog.json",
+            "input_title" : "firewall-rsyslog-udp",
+            "extractors_total" : 6,
+            "extractors" : [
+                {
+                    "extractor_config_file" : "xtrctr_firewall_rsyslog_udp_ipcommon.json",
+                    "extractor_title" : "ipcommon"
+                },
+                {
+                    "extractor_config_file" : "xtrctr_firewall_rsyslog_udp_ipdata.json",
+                    "extractor_title" : "ipdata"
+                },
+                {
+                    "extractor_config_file" : "xtrctr_firewall_rsyslog_udp_ipspecific.json",
+                    "extractor_title" : "ipspecific"
+                },
+                {
+                    "extractor_config_file" : "xtrctr_firewall_rsyslog_udp_ipv4specific.json",
+                    "extractor_title" : "ipv4specific"
+                },
+                {
+                    "extractor_config_file" : "xtrctr_firewall_rsyslog_udp_tcpdata.json",
+                    "extractor_title" : "tcpdata"
+                },
+                {
+                    "extractor_config_file" : "xtrctr_firewall_rsyslog_udp_udpdata.json",
+                    "extractor_title" : "udpdata"
+                }   
+            ],
+            "stream_config_file" : "stream_firewall_default.json",
+            "stream_title" : "firewall-default-stream"
+        },
+        {
+            "index_config_file" : "index_firewall_filterlog.json",
+            "index_title" : "firewall-filterlog-index",
+            "input_config_file" : "input_firewall_rsyslog.json",
+            "input_title" : "firewall-rsyslog-udp",
+            "extractors_total" : 0,
+            "extractors" : [],
+            "stream_config_file" : "stream_firewall_filterlog.json",
+            "stream_title" : "firewall-filterlog-stream"
+        }
+    ]   
+}

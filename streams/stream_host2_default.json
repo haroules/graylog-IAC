@@ -1,0 +1,38 @@
+{
+  "index_set_id": "67f33045a8174446ef72af8d",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "host2 default stream",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "host2.example.com",
+      "inverted": false
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "value": "host2-rsyslog",
+      "inverted": false
+    },
+    {
+      "field": "container_name",
+      "description": "",
+      "type": 5,
+      "value": "",
+      "inverted": true
+    },
+    {
+      "field": "message",
+      "description": "",
+      "type": 6,
+      "value": "_DROP:",
+      "inverted": true
+    }
+  ],
+  "title": "host2-default-stream",
+  "content_pack": null
+}

@@ -9,8 +9,8 @@ from jsonschema.exceptions import ValidationError
 
 # from source
 import graylog_global_vars
-from graylog_helpers import exit_with_message
-from graylog_helpers import is_json_valid
+from src.graylog_helpers import exit_with_message
+from src.graylog_helpers import is_json_valid
 
 def verify_configfiles_filesystem():
     # load strings of directory paths to single list
@@ -25,7 +25,7 @@ def verify_configfiles_filesystem():
     int_config_file_count = 0 # total count of config files
     int_cfg_dir_count = 0 # total count of config directories
 
-    if(graylog_global_vars.bool_verbose): print("Verifying config files, schema, and data directories")
+    print("Verifying config files, schema, and data directories")
     try:
         # get count of data dirs
         int_cfg_dir_count = len(graylog_global_vars.list_config_directories)
@@ -80,7 +80,7 @@ def verify_configfiles_filesystem():
         print(f"[Error] Unknown error occurred: {e}")
         sys.exit(1)
         
-    if(graylog_global_vars.bool_verbose): print("[Done] Verifying config files, schema, and data directories\n")
+    print("[Done] Verifying config files, schema, and data directories\n")
 
 def verify_hostconfigfiles_schema():
     # check that any object creation config files referenced in host config file exist

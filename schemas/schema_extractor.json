@@ -1,0 +1,56 @@
+{
+  "allOf": [
+    {
+      "type": "object",
+      "properties": {
+        "source_field": { "type": "string"},
+        "target_field": { "type": "string"},
+        "extractor_config": {
+          "type": "object",
+          "properties": {
+            "regex_value": { "type": "string"}
+          }
+        },
+        "extractor_type": { "type": "string"},
+        "condition_type": { "type": "string"},
+        "condition_value": { "type": "string"},
+        "converters": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string"},
+              "config": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "columm_header": { "type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "title": { "type": "string"},
+        "cursor_strategy": { "type": "string"},
+        "order": { "type": "integer"}
+      },
+      "required": [
+        "source_field",
+        "target_field",
+        "extractor_config",
+        "extractor_type",
+        "condition_type",
+        "condition_value",
+        "converters",
+        "title",
+        "cursor_strategy",
+        "order"
+      ]
+    }
+  ]
+}

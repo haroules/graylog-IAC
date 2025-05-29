@@ -1,0 +1,96 @@
+services:
+  mongodb:
+    image: "mongo:6.0.18"
+    # stop verbose mongo logs
+    command: --quiet
+    ports:
+      - "27017:27017"   
+    restart: "always"
+    networks:
+      - graylog
+    volumes:
+      - "mongodb_data:/data/db"
+      - "mongodb_config:/data/configdb" 
+ 
+  datanode:
+    image: "graylog/graylog-datanode:6.1"
+    hostname: "datanode"
+    environment:
+      GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
+      GRAYLOG_DATANODE_PASSWORD_SECRET: "rMVjvHSNmPENaJl2kC4agajx7GDUXQzx7mfJMVY7mDFpZ6lLPRbaGMUDQos1bsny6ABKMrUVzynNtSiZECiMwbwOEDgxOt75"
+      GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "1d5530d11636226d0617e4e2915123b4051e86ffce2ad1f0fb45630c5a21b78a"
+      GRAYLOG_DATANODE_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+    #when running rootless the below cannot be set
+    #ulimits:
+      #memlock:
+        #hard: -1
+        #soft: -1
+      #nofile:
+        #soft: 65536
+        #hard: 65536
+    ports:
+      - "8999:8999/tcp"   # DataNode API
+      - "9200:9200/tcp"
+      - "9300:9300/tcp"
+    networks:
+      - graylog  
+    volumes:
+      - "graylog-datanode:/var/lib/graylog-datanode"
+    restart: "always"  
+
+  graylog:
+    hostname: "server"
+    image: "graylog/graylog:6.1"
+    # To install Graylog Open: "graylog/graylog:6.1"
+    depends_on:
+      mongodb:
+        condition: "service_started"
+      datanode:
+        condition: "service_started"
+    entrypoint: "/usr/bin/tini -- /docker-entrypoint.sh"
+    environment:
+      GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/config/node-id"
+      GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9000"
+      GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+      # To make reporting (headless_shell) work inside a Docker container
+      GRAYLOG_REPORT_DISABLE_SANDBOX: "true"
+      GRAYLOG_PASSWORD_SECRET: "rMVjvHSNmPENaJl2kC4agajx7GDUXQzx7mfJMVY7mDFpZ6lLPRbaGMUDQos1bsny6ABKMrUVzynNtSiZECiMwbwOEDgxOt75"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "1d5530d11636226d0617e4e2915123b4051e86ffce2ad1f0fb45630c5a21b78a"
+      GRAYLOG_ROOT_TIMEZONE: "America/New_York"
+      GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
+    ports:
+      # Graylog web interface and REST API
+      - "9000:9000/tcp"
+      # Beats
+      - "5044:5044/tcp"
+      # Syslog TCP
+      - "5140:5140/tcp"
+      # Syslog UDP
+      - "5140:5140/udp"
+      # Firewall
+      - "5143:5143/udp"
+      # Host1
+      - "5141:5141/udp"
+      # Host2
+      - "5142:5142/udp"
+      # GELF TCP
+      - "12201:12201/tcp"
+      # GELF UDP
+      - "12201:12201/udp"
+      # Forwarder data
+      - "13301:13301/tcp"
+      # Forwarder config
+      - "13302:13302/tcp"
+    restart: "always"
+    networks:
+      - graylog
+    volumes:
+      - "graylog_data:/usr/share/graylog/data"
+networks:
+  graylog:
+    driver: "bridge"
+volumes:
+  mongodb_data:
+  mongodb_config:
+  graylog-datanode:
+  graylog_data:

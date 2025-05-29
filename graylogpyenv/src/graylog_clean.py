@@ -6,6 +6,7 @@ import base64
 from jqpy import jq
 
 #TODO: Align with setup.py
+#TODO: Exception handlers are busted
 
 # Define global variables
 baseurl = ""
@@ -18,30 +19,30 @@ def parse_args():
     global baseurl
     # check 2 args passed, argv has script name as arg so total should be 3
     if (len(sys.argv) != 3):
-        print("Error, script arguments.", len(sys.argv) - 1, "were passed.") 
+        print("[ERROR] Script arguments.", len(sys.argv) - 1, "were passed.") 
         print("Expecting auth token and url in that order, arguments will be undergo minimal input validation")
         sys.exit(1)
     # check token is 52 characters
     if(len(sys.argv[1]) != 52): 
-        print("Error: Arguments, token should be 52 alpha-numeric characters. Token length was:", len(sys.argv[1]) )
+        print("[ERROR] Script arguments, token should be 52 alpha-numeric characters. Token length was:", len(sys.argv[1]) )
         sys.exit(1)
     # check token is alpha numeric characters only
     if( not (sys.argv[1].isalnum())):
-        print("Error: Arguments, token should be 52 alpha-numeric characters. Token passed had non alphanumeric characters.")
+        print("[ERROR] Script Arguments, token should be 52 alpha-numeric characters. Token passed had non alphanumeric characters.")
         sys.exit(1)
     # check url has valid form
     match = validators.url(sys.argv[2])
     if(not(bool(match))):
-        print("Error: Arguments, url appears malformed")
+        print("[ERROR] Script Arguments, url appears malformed")
         sys.exit(1)
     # check url responds
     try:
         response = requests.head(sys.argv[2], timeout=5)
         if (response.status_code != 200):
-            print("URL does not appear to respond.")
+            print("[ERROR] Script Arguments, URL does not appear to respond.")
             sys.exit(1)
     except requests.exceptions.RequestException as e:
-        print(f"Request error: {e}")
+        print(f"[ERROR] Request error: {e}")
         sys.exit(1)
     
     # passed checks set global vars

@@ -1,0 +1,33 @@
+{
+  "shards" : 1,
+  "replicas" : 0,
+  "rotation_strategy_class" : "org.graylog2.indexer.rotation.strategies.TimeBasedSizeOptimizingStrategy",
+  "rotation_strategy" : {
+    "type" : "org.graylog2.indexer.rotation.strategies.TimeBasedSizeOptimizingStrategyConfig",
+    "index_lifetime_min" : "P7D",
+    "index_lifetime_max" : "P14D"
+  },
+  "retention_strategy_class" : "org.graylog2.indexer.retention.strategies.DeletionRetentionStrategy",
+  "retention_strategy" : {
+    "type" : "org.graylog2.indexer.retention.strategies.DeletionRetentionStrategyConfig",
+    "max_number_of_indices" : 20
+  },
+  "data_tiering" : {
+      "type" : "hot_only",
+      "index_lifetime_min" : "P7D",
+      "index_lifetime_max" : "P14D"
+    },
+  "title" : "firewall-default-index",
+  "description" : "firewall default index",
+  "can_be_default" : true,
+  "index_prefix" : "firewall-default-",
+  "index_analyzer" : "standard",
+  "index_optimization_max_num_segments" : 1,
+  "index_optimization_disabled" : false,
+  "field_type_refresh_interval" : 5000,
+  "index_template_type" : null,
+  "field_type_profile" : null,
+  "use_legacy_rotation" : false,
+  "default" : false,
+  "writable" : true
+}

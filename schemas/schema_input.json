@@ -1,0 +1,129 @@
+  {
+    "allOf": [
+      {
+        "type": "object",
+        "properties": {
+          "node": {
+            "type": "string",
+            "minLength": 36,
+            "maxLength": 36
+          },
+          "global": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "configuration": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "recv_buffer_size": {
+                    "type": "integer"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "number_worker_threads": {
+                    "type": "integer"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  },
+                  "override_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "charset_name": {
+                    "type": "string"
+                  },
+                  "bind_address": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "recv_buffer_size",
+                  "port",
+                  "number_worker_threads",
+                  "timezone",
+                  "override_source",
+                  "charset_name",
+                  "bind_address"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "expand_structured_data": {
+                    "type": "boolean"
+                  },
+                  "recv_buffer_size": {
+                    "type": "integer"
+                  },
+                  "port": {
+                    "type": "integer"
+                  },
+                  "number_worker_threads": {
+                    "type": "integer"
+                  },
+                  "timezone": {
+                    "type": "string"
+                  },
+                  "override_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "charset_name": {
+                    "type": "string"
+                  },
+                  "force_rdns": {
+                    "type": "boolean"
+                  },
+                  "allow_override_date": {
+                    "type": "boolean"
+                  },
+                  "bind_address": {
+                    "type": "string"
+                  },
+                  "store_full_message": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "expand_structured_data",
+                  "recv_buffer_size",
+                  "port",
+                  "number_worker_threads",
+                  "timezone",
+                  "override_source",
+                  "charset_name",
+                  "force_rdns",
+                  "allow_override_date",
+                  "bind_address",
+                  "store_full_message"
+                ],
+                "additionalProperties": false
+              }
+            ]
+          }
+        },
+        "required": [
+          "node",
+          "global",
+          "title",
+          "type",
+          "configuration"
+        ],
+        "additionalProperties": false
+      }
+    ]
+  }

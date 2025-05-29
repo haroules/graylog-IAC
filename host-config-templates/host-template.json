@@ -1,0 +1,21 @@
+{
+  "hostname" : "<replace>",
+  "config_sets_total" : 1,
+  "config_sets" : [
+    {
+       "index_config_file" : "<replace>",
+       "index_title" : "<replace>",
+       "input_config_file" : "<replace>",
+       "input_title" : "<replace>",
+       "extractors_total" : 1,
+       "extractors" : [
+         {
+            "extractor_config_file" :"<replace>",
+            "extractor_title" : "<replace>"
+         }
+       ],
+       "stream_config_file" : "<replace>",
+       "stream_title" : "<replace>"
+    }
+  ]
+}

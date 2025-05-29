@@ -1,0 +1,31 @@
+{
+  "index_set_id": "67f33045a8174446ef72af81",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "firewall filterlog stream",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "firewall.example.com",
+      "inverted": false
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "inverted": false,
+      "value": "firewall-rsyslog-udp"
+    },
+    {
+      "field": "application_name",
+      "description": "",
+      "type": 1,
+      "inverted": false,
+      "value": "filterlog"
+    }
+  ],
+  "title": "firewall-filterlog-stream",
+  "content_pack": null
+}

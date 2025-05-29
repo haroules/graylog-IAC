@@ -1,0 +1,102 @@
+{
+    "allOf": [
+        {
+            "type": "object",
+            "properties": {
+                "hostname": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 30
+                },
+                "config_sets_total": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "config_sets": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "index_config_file": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50
+                            },
+                            "index_title": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50
+                            },
+                            "input_config_file": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50
+                            },
+                            "input_title": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50
+                            },
+                            "extractors": {
+                                "type": "array",
+                                "items": {
+                                    "type": [
+                                        "object",
+                                        "null"
+                                    ],
+                                    "properties": {
+                                        "extractor_config_file": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 50
+                                        },
+                                        "extractor_title": {
+                                            "type": "string",
+                                            "minLength": 1,
+                                            "maxLength": 50
+                                        }
+                                    },
+                                    "required": [
+                                        "extractor_config_file",
+                                        "extractor_title"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "extractors_total": {
+                                "type": "integer",
+                                "minimum": 0
+                            },
+                            "stream_config_file": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50
+                            },
+                            "stream_title": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 50
+                            }
+                        },
+                        "required": [
+                            "index_config_file",
+                            "index_title",
+                            "input_config_file",
+                            "input_title",
+                            "extractors_total",
+                            "stream_config_file",
+                            "stream_title"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": [
+                "hostname",
+                "config_sets_total",
+                "config_sets"
+            ],
+            "additionalProperties": false
+        }
+    ]
+}
