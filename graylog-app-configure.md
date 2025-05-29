@@ -92,7 +92,7 @@ or
 sudo yum install -y jq python3-virtualenv
 ```
 ### 3. Run the python scripts in virtual env
-1. Setup the python virtualenv (only have to do this one time)
+1. Setup the python virtualenv in parent folder above graylogpyenv folder
 ```
 virtualenv graylogpyenv
 source graylogpyenv/bin/activate
@@ -106,15 +106,23 @@ pip3 install pytest-cov
 pip3 install requests_mock
 pip3 install pytest_mock
 pip3 install pyclean
+pip3 install pylint
+pip3 freeze > requirements.txt
 ```
-2. Run the python script to setup the graylog app config. <br>
+Or if you pulled this project from source
+```
+pip install -r requirements.txt
+```
+2. Run the python script to setup, clean, or verify the graylog app config. <br>
 **(Leave a space to ensure token isn't stored in shell history)** <br>
-example assumes your graylog docker host is running/listening at 192.168.1.5 
+examples assumes your graylog docker host is running/listening at 192.168.1.5 
 ```
- python graylog-setup.py "token" "http://192.168.1.5:9000/api"
+python graylog_verify.py <verbose flag optional>
+
+ python graylog-setup.py "token" "http://192.168.1.5:9000/api" <verbose flag optional>
 
 # ONLY IF YOU READ AND UNDERSTAND EXPLANATION POSTED ABOVE IN CAUTION SECTION
- python graylog-clean.py "token" "http://192.168.1.5:9000/api"
+ python graylog-clean.py "token" "http://192.168.1.5:9000/api" <verbose flag optional>
 ```
 3. When done running python scripts to return to normal shell
 ```
@@ -125,7 +133,21 @@ deactivate
 source graylogpyenv/bin/activate
 python graylog-setup.py "token" "http://192.168.1.5:9000/api"
 ```
+5. Run python tests inside virtualenv and get coverage report including missing coverage
+```
+python -m pytest tests -v --cov=. --cov-report term-missing
+```
+6. Clean up pycache and pytest_cache inside virtualenv
+```
+pyclean .
+```
+7. pylint
+```
+pylint --recursive=y --generate-rcfile > .pylintrc
+add init-hook='import sys; sys.path.append(".")' to .pylintrc
+pylint --errors-only --recursive=y .
 
+```
 ## How to send syslog messages to test input
 1. Example with graylog app running on host 192.168.1.2 and you want to send a message from another host or docker host itself
 ```

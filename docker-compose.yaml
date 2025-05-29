@@ -1,7 +1,6 @@
 services:
   mongodb:
     image: "mongo:6.0.18"
-    # stop verbose mongo logs
     command: --quiet
     ports:
       - "27017:27017"   
@@ -13,14 +12,13 @@ services:
       - "mongodb_config:/data/configdb" 
  
   datanode:
-    image: "graylog/graylog-datanode:6.1"
+    image: "graylog/graylog-datanode:6.2"
     hostname: "datanode"
     environment:
       GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
       GRAYLOG_DATANODE_PASSWORD_SECRET: "rMVjvHSNmPENaJl2kC4agajx7GDUXQzx7mfJMVY7mDFpZ6lLPRbaGMUDQos1bsny6ABKMrUVzynNtSiZECiMwbwOEDgxOt75"
       GRAYLOG_DATANODE_ROOT_PASSWORD_SHA2: "1d5530d11636226d0617e4e2915123b4051e86ffce2ad1f0fb45630c5a21b78a"
       GRAYLOG_DATANODE_MONGODB_URI: "mongodb://mongodb:27017/graylog"
-    #when running rootless the below cannot be set
     #ulimits:
       #memlock:
         #hard: -1
@@ -40,8 +38,8 @@ services:
 
   graylog:
     hostname: "server"
-    image: "graylog/graylog:6.1"
-    # To install Graylog Open: "graylog/graylog:6.1"
+    image: "graylog/graylog:6.2"
+    # To install Graylog Open: "graylog/graylog:6.2"
     depends_on:
       mongodb:
         condition: "service_started"
@@ -69,9 +67,9 @@ services:
       - "5140:5140/udp"
       # Firewall
       - "5143:5143/udp"
-      # Host1
+      # host1
       - "5141:5141/udp"
-      # Host2
+      # host2
       - "5142:5142/udp"
       # GELF TCP
       - "12201:12201/tcp"

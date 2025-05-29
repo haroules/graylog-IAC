@@ -1,0 +1,29 @@
+"""
+declare and initialize global variables for clean and setup
+"""
+
+# intialize to empty - they get assigned in gralog_helpers:set_global_vars
+BOOL_VERBOSE = ""
+STR_ADMINTOKEN = ""
+STR_PTH_EXTRCTR_CFG = ""
+STR_PTH_HOST_CFG_DIR = ""
+STR_PTH_HOST_CFG_TEMPLATE = ""
+STR_PTH_HOST_SCHEMA = ""
+STR_PTH_INDICES_CFG = ""
+STR_PTH_INPUTS_CFG = ""
+STR_PTH_STREAMS_CFG = ""
+STR_PTH_SCHEMAS = ""
+STR_PTH_SCHEMA_INDEX = ""
+STR_PTH_SCHEMA_INPUT = ""
+STR_PTH_SCHEMA_EXTRACTOR = ""
+STR_PTH_SCHEMA_STREAM = ""
+STR_CLUSTER_URL = ""
+STR_INDEXSETS_URL = ""
+STR_INPUTS_URL = ""
+STR_NODE_ID_URL = ""
+STR_STREAMS_URL = ""
+DICT_GET_HEADERS = {}
+DICT_POST_HEADERS = {}
+LIST_CONFIG_DIRECTORIES = []
+LIST_BUILTIN_INDEX_NAMES = []
+LIST_BUILTIN_STREAMS_IDS = []

@@ -89,9 +89,9 @@ This requires scripting with sed/awk etc. Examples to come in future updates.
 ## Update graylog containers
 ```
 docker compose down
-docker pull graylog/graylog:6.1
-docker pull graylog/graylog-datanode:6.1
-
+docker pull graylog/graylog:6.2
+docker pull graylog/graylog-datanode:6.2
+docker compose up -d
 ```
 
 ## Teardown app and cleanup data
