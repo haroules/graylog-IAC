@@ -1,6 +1,4 @@
-"""
-graylog_verify main routine def and imports
-"""
+""" graylog_verify main module """
 
 import sys
 from src.verify import verify_configfiles_filesystem

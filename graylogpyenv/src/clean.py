@@ -1,9 +1,9 @@
 """src.clean module"""
-
 import json
 from typing import Tuple
 import requests
 from jqpy import jq
+
 from src.helpers import remove_sublists
 from src.helpers import exit_with_message
 

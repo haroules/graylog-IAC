@@ -4,9 +4,11 @@ import requests
 import pytest
 
 from src.setup import create_streams
-from tests.setup.test_setup_common import create_sample_host_config_dir
-from tests.setup.test_setup_common import create_sample_stream_config_dir
+from tests.common.test_common import create_sample_host_config_dir
+from tests.common.test_common import create_sample_stream_config_dir
 from tests.setup.test_setup_common import create_bad_2_sample_stream_config_dir
+from tests.common.test_common import shared_asserts
+
 MOCK_STREAMS_URL="https://mock.api/streams"
 MOCK_INDEXSETS_URL="https://mock.api/indexsets"
 MOCK_DICT_POST_HEADERS={"Authorization": "Bearer mock"}
@@ -16,7 +18,7 @@ MOCK_STREAMS_API = '{"stream_id": "new_stream_id"}'
 MOCK_GET_INDEXSETID_BYTITLE='{"index_sets": [{ "id": "samplehost_index_setid", "title": "samplehost-stream"}]}'
 
 def test_create_streams_verbose_success(tmp_path,mocker,capsys) -> None:
-    """setup test_create_streams_verbose_success function"""
+    """tests.setup.test_create_streams_verbose_success function"""
     hostconfigdir=create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfigdir=create_sample_stream_config_dir(tmp_path,"config-2")
@@ -46,7 +48,7 @@ def test_create_streams_verbose_success(tmp_path,mocker,capsys) -> None:
     assert captured.out == expected_output
 
 def test_create_streams_verbose_failed(tmp_path,mocker,capsys) -> None:
-    """setup test_create_streams_verbose_failed function"""
+    """tests.setup.test_create_streams_verbose_failed function"""
     hostconfigdir=create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfigdir=create_sample_stream_config_dir(tmp_path,"config-2")
@@ -73,11 +75,10 @@ def test_create_streams_verbose_failed(tmp_path,mocker,capsys) -> None:
         "      Create Stream samplehost_stream from config config_0.json\n"
         f"[ERROR] Create streams failed. Message: {mock_create_response.text}\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_create_streams_fail_filenotfound(tmp_path,capsys) -> None:
-    """setup test_create_streams_fail_filenotfound function"""
+    """tests.setup.test_create_streams_fail_filenotfound function"""
     hostconfigdir=create_sample_host_config_dir(tmp_path,"config-1")
     with pytest.raises(SystemExit) as e:
         create_streams(MOCK_BOOL_VEBOSE,"bad_path", hostconfigdir, MOCK_INDEXSETS_URL,
@@ -88,11 +89,10 @@ def test_create_streams_fail_filenotfound(tmp_path,capsys) -> None:
         "Processing streams\n"
         f"{message} [Errno 2] No such file or directory: 'bad_path'\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_create_streams_fail_requestexception(tmp_path,mocker,capsys) -> None:
-    """setup test_create_streams_fail_requestexception function"""
+    """stests.setup.test_create_streams_fail_requestexception function"""
     hostconfigdir=create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfigdir=create_sample_stream_config_dir(tmp_path,"config-2")
@@ -115,11 +115,10 @@ def test_create_streams_fail_requestexception(tmp_path,mocker,capsys) -> None:
         "      Create Stream samplehost_stream from config config_0.json\n"
         "[ERROR] Request error in create_streams: Connection error\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_create_streams_fail_jsondecode(tmp_path,mocker,capsys) -> None:
-    """setup test_create_streams_fail_jsondecode function"""
+    """tests.setup.test_create_streams_fail_jsondecode function"""
     hostconfigdir=create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfigdir=create_bad_2_sample_stream_config_dir(tmp_path,"config-2")
@@ -142,5 +141,4 @@ def test_create_streams_fail_jsondecode(tmp_path,mocker,capsys) -> None:
         "      Create Stream samplehost_stream from config config_1.json\n"
         f"{message} Expecting value: line 1 column 1 (char 0)\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)

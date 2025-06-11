@@ -4,8 +4,10 @@ import requests
 import pytest
 
 from src.setup import create_inputs
-from tests.setup.test_setup_common import create_sample_input_config_dir
-from tests.setup.test_setup_common import create_bad_sample_input_config_dir
+
+from tests.setup.test_setup_common import create_bad_config_dir
+from tests.common.test_common import create_sample_input_config_dir
+from tests.common.test_common import shared_asserts
 
 MOCK_INPUTS_URL="https://mock.api/inputs"
 MOCK_NODE_URL="https://mock.api/nodeidurl"
@@ -13,9 +15,8 @@ MOCK_DICT_POST_HEADERS={"Authorization": "Bearer mock"}
 MOCK_DICT_GET_HEADERS={"Authorization": "Bearer mock"}
 MOCK_BOOL_VEBOSE=True
 
-
 def test_create_inputs_verbose_success(tmp_path,mocker,capsys) -> None:
-    """setup test_create_inputs_non_exist_verbose_success function"""
+    """tests.setup.test_create_inputs_verbose_success function"""
     config=create_sample_input_config_dir(tmp_path,"config-1")
     config_file_list=[tmp_path.as_posix()+"/config-1/config_0.json"]
     mocker.patch("src.setup.get_list_config_files",return_value=config_file_list)
@@ -39,7 +40,7 @@ def test_create_inputs_verbose_success(tmp_path,mocker,capsys) -> None:
     assert captured.out == expected_output
 
 def test_create_inputs_fail_post_response(tmp_path,mocker,capsys) -> None:
-    """setup test_create_inputs_fail_post_response function"""
+    """tests.setup.test_create_inputs_fail_post_response function"""
     config=create_sample_input_config_dir(tmp_path,"config-1")
     config_file_list=[tmp_path.as_posix()+"/config-1/config_0.json"]
     mocker.patch("src.setup.get_list_config_files",return_value=config_file_list)
@@ -59,11 +60,10 @@ def test_create_inputs_fail_post_response(tmp_path,mocker,capsys) -> None:
         "Processing inputs\n"
         "[ERROR] Create input failed. Message: Create input failure\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_create_inputs_fail_file_not_found(tmp_path,mocker,capsys) -> None:
-    """setup test_create_inputs_non_exist_fail_file_not_found"""
+    """tests.setup.test_create_inputs_fail_file_not_found function"""
     config=create_sample_input_config_dir(tmp_path,"config-1")
     config_file_list=[tmp_path.as_posix()+"/config-1/config_3.json"]
     mocker.patch("src.setup.get_list_config_files",return_value=config_file_list)
@@ -77,12 +77,11 @@ def test_create_inputs_fail_file_not_found(tmp_path,mocker,capsys) -> None:
         "Processing inputs\n"
         f"{message} [Errno 2] No such file or directory: '{config_file_list[0]}'\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_create_inputs_fail_json_decode(tmp_path,mocker,capsys) -> None:
-    """setup test_create_inputs_fail_json_decode function"""
-    config=create_bad_sample_input_config_dir(tmp_path,"config-1")
+    """tests.setup.test_create_inputs_fail_json_decode function"""
+    config=create_bad_config_dir(tmp_path,"config-1")
     config_file_list=[tmp_path.as_posix()+"/config-1/config_0.json"]
     mocker.patch("src.setup.get_list_config_files",return_value=config_file_list)
     mocker.patch("src.setup.update_nodeid_in_input_config_files",return_value=None)
@@ -95,11 +94,10 @@ def test_create_inputs_fail_json_decode(tmp_path,mocker,capsys) -> None:
         "Processing inputs\n"
         f"{message} Expecting value: line 1 column 1 (char 0)\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_create_inputs_fail_request_exception(tmp_path,mocker,capsys) -> None:
-    """setup test_create_inputs_fail_request_exception function"""
+    """tests.setup.test_create_inputs_fail_request_exception function"""
     config=create_sample_input_config_dir(tmp_path,"config-1")
     config_file_list=[tmp_path.as_posix()+"/config-1/config_0.json"]
     mocker.patch("src.setup.get_list_config_files",return_value=config_file_list)
@@ -115,5 +113,4 @@ def test_create_inputs_fail_request_exception(tmp_path,mocker,capsys) -> None:
         "Processing inputs\n"
         "[ERROR] Request error in create inputs: Connection error\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)

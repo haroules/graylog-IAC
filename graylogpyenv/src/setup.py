@@ -1,13 +1,10 @@
 """src.setup module"""
-
-# from pyenv
 import os
 import json
 from typing import Union
 import requests
 from jqpy import jq
 
-# from source
 from src.helpers import exit_with_message
 from src.helpers import contains_sublist
 import global_vars

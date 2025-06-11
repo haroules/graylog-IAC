@@ -3,32 +3,20 @@ from unittest.mock import Mock
 import requests
 import pytest
 
-from tests.setup.test_setup_common import create_sample_stream_config_dir
-from tests.setup.test_setup_common import create_bad_sample_stream_config_dir
-from tests.setup.test_setup_common import create_sample_host_config_dir
-from tests.setup.test_setup_common import create_bad_sample_host_config_dir
 from src.setup import update_index_id_in_stream_config_file
+from tests.common.test_common import create_sample_stream_config_dir
+from tests.common.test_common import create_sample_host_config_dir
+from tests.setup.test_setup_common import create_bad_sample_stream_config_dir
+from tests.setup.test_setup_common import create_bad_config_dir
+from tests.common.test_common import shared_asserts
 
 MOCK_INDEX_URL="https://mock.api/indexsets"
 MOCK_DICT_GET_HEADERS={"Authorization": "Bearer mock"}
 MOCK_BOOL_VERBOSE=True
 MOCK_GET_INDEXSETID_BYTITLE='{"index_sets": [{ "id": "samplehost_index_setid", "title": "samplehost-stream"}]}'
-MOCK_HOST_CONFIG=[{
-        "index_config_file":"index_samplehost.json",
-        "index_title":"samplehost_title",
-        "input_config_file":"input_samplehost.json",
-        "input_title":"samplehost_title",
-        "extractors_total":1,
-        "extractors":[{
-            "extractor_config_file" :"extracor.json",
-            "extractor_title" : "some_extractor"
-        }],
-        "stream_config_file":"stream.json",
-        "stream_title":"samplehost-stream"
-        }]
 
 def test_update_index_id_in_stream_config_file_pass_verbose(tmp_path, mocker,capsys) -> None:
-    """tests.setup test_update_index_id_in_stream_config_file_pass_verbose function"""
+    """tests.setup.test_update_index_id_in_stream_config_file_pass_verbose function"""
     create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfig=create_sample_stream_config_dir(tmp_path,"config-2")
@@ -40,13 +28,11 @@ def test_update_index_id_in_stream_config_file_pass_verbose(tmp_path, mocker,cap
     update_index_id_in_stream_config_file(MOCK_BOOL_VERBOSE, hostconfigfile_path, streamconfig,
         MOCK_INDEX_URL, MOCK_DICT_GET_HEADERS)
     captured = capsys.readouterr()
-    expected_output = (
-            "    Updating config_0.json with index id samplehost_index_setid\n"
-    )
+    expected_output = "    Updating config_0.json with index id samplehost_index_setid\n"
     assert captured.out == expected_output
 
 def test_update_index_id_in_stream_config_file_fail_non200(tmp_path, mocker,capsys) -> None:
-    """tests.setup test_update_index_id_in_stream_config_file_fail_non200 function"""
+    """tests.setup.test_update_index_id_in_stream_config_file_fail_non200 function"""
     create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfig=create_sample_stream_config_dir(tmp_path,"config-2")
@@ -59,14 +45,11 @@ def test_update_index_id_in_stream_config_file_fail_non200(tmp_path, mocker,caps
         update_index_id_in_stream_config_file(MOCK_BOOL_VERBOSE, hostconfigfile_path, streamconfig,
             MOCK_INDEX_URL, MOCK_DICT_GET_HEADERS)
     captured = capsys.readouterr()
-    expected_output = (
-            f"[ERROR] Get index id by index name failed. Message:{mock_response.text}\n"
-    )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    expected_output = f"[ERROR] Get index id by index name failed. Message:{mock_response.text}\n"
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_index_id_in_stream_config_file_fail_update_stream_config(tmp_path, mocker,capsys) -> None:
-    """tests.setup test_update_index_id_in_stream_config_file_fail_update_stream_config function"""
+    """tests.setup.test_update_index_id_in_stream_config_file_fail_update_stream_config function"""
     create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfig=create_bad_sample_stream_config_dir(tmp_path,"config-2")
@@ -80,28 +63,22 @@ def test_update_index_id_in_stream_config_file_fail_update_stream_config(tmp_pat
         update_index_id_in_stream_config_file(MOCK_BOOL_VERBOSE, hostconfigfile_path, streamconfig,
             MOCK_INDEX_URL, MOCK_DICT_GET_HEADERS)
     captured = capsys.readouterr()
-    expected_output = (
-            f"[ERROR] Couldn't update stream config file {streampath}\n"
-    )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    expected_output = f"[ERROR] Couldn't update stream config file {streampath}\n"
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_index_id_in_stream_config_file_fail_filenotfound(tmp_path,capsys) -> None:
-    """tests.setup test_update_index_id_in_stream_config_file_fail_filenotfound function"""
-    streamconfig=create_bad_sample_stream_config_dir(tmp_path,"config-2")
+    """tests.setup.test_update_index_id_in_stream_config_file_fail_filenotfound function"""
+    streamconfig=create_bad_config_dir(tmp_path,"config-2")
     with pytest.raises(SystemExit) as e:
         update_index_id_in_stream_config_file(MOCK_BOOL_VERBOSE, "bad_path", streamconfig,
             MOCK_INDEX_URL, MOCK_DICT_GET_HEADERS)
     captured = capsys.readouterr()
     message = "[ERROR] File or directory not found in update_index_id_in_stream_config_file:"
-    expected_output = (
-            f"{message} [Errno 2] No such file or directory: 'bad_path'\n"
-    )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    expected_output = f"{message} [Errno 2] No such file or directory: 'bad_path'\n"
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_index_id_in_stream_config_file_fail_requestexception(tmp_path, mocker,capsys) -> None:
-    """tests.setup test_update_index_id_in_stream_config_file_fail_requestexception function"""
+    """tests.setup.test_update_index_id_in_stream_config_file_fail_requestexception function"""
     create_sample_host_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
     streamconfig=create_sample_stream_config_dir(tmp_path,"config-2")
@@ -114,24 +91,18 @@ def test_update_index_id_in_stream_config_file_fail_requestexception(tmp_path, m
         update_index_id_in_stream_config_file(MOCK_BOOL_VERBOSE, hostconfigfile_path, streamconfig,
             MOCK_INDEX_URL, MOCK_DICT_GET_HEADERS)
     captured = capsys.readouterr()
-    expected_output = (
-            "[ERROR] Request error in update_index_id_in_stream_config_file: Connection error\n"
-    )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    expected_output = "[ERROR] Request error in update_index_id_in_stream_config_file: Connection error\n"
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_index_id_in_stream_config_file_fail_jsondecode(tmp_path,capsys) -> None:
-    """tests.setup test_update_index_id_in_stream_config_file_fail_update_stream_config function"""
-    create_bad_sample_host_config_dir(tmp_path,"config-1")
+    """tests.setup.test_update_index_id_in_stream_config_file_fail_jsondecode function"""
+    create_bad_config_dir(tmp_path,"config-1")
     hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
-    streamconfig=create_bad_sample_stream_config_dir(tmp_path,"config-2")
+    streamconfig=create_bad_config_dir(tmp_path,"config-2")
     with pytest.raises(SystemExit) as e:
         update_index_id_in_stream_config_file(MOCK_BOOL_VERBOSE, hostconfigfile_path, streamconfig,
             MOCK_INDEX_URL, MOCK_DICT_GET_HEADERS)
     captured = capsys.readouterr()
     message = "[ERROR] There was a problem decoding json in update_index_id_in_stream_config_file:"
-    expected_output = (
-            f"{message} Expecting value: line 1 column 1 (char 0)\n"
-    )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    expected_output = f"{message} Expecting value: line 1 column 1 (char 0)\n"
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)

@@ -1,4 +1,4 @@
-"""clean test_get_all_stream_ids module"""
+"""tests.clean test_get_all_stream_ids module"""
 import json
 from unittest.mock import Mock
 
@@ -8,7 +8,7 @@ MOCK_FAKE_URL = "http://test-url.com"
 MOCK_DICT_GET_HEADERS = {"Authorization": "Bearer token"}
 
 def test_get_list_all_stream_ids_pass(mocker) -> None:
-    """clean test_get_list_all_stream_ids_pass function"""
+    """tests.clean.test_get_list_all_stream_ids_pass function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = '{"streams": [{"id": "stream1"}, {"id": "stream2"}]}'

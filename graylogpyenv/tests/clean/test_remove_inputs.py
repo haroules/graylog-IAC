@@ -1,9 +1,10 @@
-"""clean test_remove_inputs module"""
+"""tests.clean test_remove_inputs module"""
 from unittest.mock import patch, Mock
 import requests
 import pytest
 
 from src.clean import remove_inputs
+from tests.common.test_common import shared_asserts
 
 MOCK_BOOL_VERBOSE = True
 MOCK_STR_INPUTS_URL = "http://test-url.com/inputs"
@@ -16,7 +17,7 @@ MOCK_FAIL_LIST = (["id1"], ["Input 1"])
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_success_removables(mock_gen_list, mock_delete, capsys) -> None:
-    """clean test_remove_inputs_success_removables function"""
+    """tests.clean.test_remove_inputs_success_removables function"""
     mock_gen_list.return_value = MOCK_LIST_INPUTS
     mock_response = Mock()
     mock_response.status_code = 204
@@ -34,7 +35,7 @@ def test_remove_inputs_success_removables(mock_gen_list, mock_delete, capsys) ->
 
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_success_noremovables(mock_gen_list, capsys) -> None:
-    """clean test_remove_inputs_success_noremovables function"""
+    """tests.clean.test_remove_inputs_success_noremovables function"""
     mock_gen_list.return_value = ([], [])
     assert remove_inputs(*MOCK_REMOVE_INPUTS_ARGS) is True
     captured = capsys.readouterr()
@@ -47,14 +48,14 @@ def test_remove_inputs_success_noremovables(mock_gen_list, capsys) -> None:
 
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
-def test_remove_inputs_fail_non_204_response_fail(mock_gen_list, mock_delete, capsys) -> None:
-    """clean test_remove_inputs_non_204_response_fail function"""
+def test_remove_inputs_fail_non_204_response(mock_gen_list, mock_delete, capsys) -> None:
+    """tests.clean.test_remove_inputs_fail_non_204_response function"""
     mock_gen_list.return_value = MOCK_FAIL_LIST
     mock_response = Mock()
     mock_response.status_code = 400
     mock_response.raise_for_status.return_value = None
     mock_delete.return_value = mock_response
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as e:
         remove_inputs(*MOCK_REMOVE_INPUTS_ARGS)
     captured = capsys.readouterr()
     expected_output = (
@@ -64,15 +65,15 @@ def test_remove_inputs_fail_non_204_response_fail(mock_gen_list, mock_delete, ca
         f"Removing Input Titles {MOCK_FAIL_LIST[1]}\n"
         "[ERROR] Failed to delete input: id1\n"
     )
-    assert captured.out == expected_output
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_fail_request_exception(mock_gen_list, mock_delete, capsys) -> None:
-    """clean test_remove_inputs_request_exception function"""
+    """tests.clean.test_remove_inputs_fail_request_exception function"""
     mock_gen_list.return_value = MOCK_FAIL_LIST
     mock_delete.side_effect = requests.exceptions.RequestException("Network error")
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as e:
         remove_inputs(*MOCK_REMOVE_INPUTS_ARGS)
     captured = capsys.readouterr()
     expected_output = (
@@ -82,15 +83,15 @@ def test_remove_inputs_fail_request_exception(mock_gen_list, mock_delete, capsys
         f"Removing Input Titles {MOCK_FAIL_LIST[1]}\n"
         "Request error in remove_inputs: Network error\n"
     )
-    assert captured.out == expected_output
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_fail_value_error(mock_gen_list, mock_delete, capsys) -> None:
-    """clean test_remove_inputs_value_error function"""
+    """tests.clean.test_remove_inputs_fail_value_error function"""
     mock_gen_list.return_value = MOCK_FAIL_LIST
     mock_delete.side_effect = ValueError("JSON error")
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as e:
         remove_inputs(*MOCK_REMOVE_INPUTS_ARGS)
     captured = capsys.readouterr()
     expected_output = (
@@ -100,4 +101,4 @@ def test_remove_inputs_fail_value_error(mock_gen_list, mock_delete, capsys) -> N
         f"Removing Input Titles {MOCK_FAIL_LIST[1]}\n"
         "JSON decoding error in remove_inputs: JSON error\n"
     )
-    assert captured.out == expected_output
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)

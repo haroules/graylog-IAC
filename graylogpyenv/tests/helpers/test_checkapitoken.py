@@ -1,4 +1,4 @@
-"""helpers test_checkapitoken module"""
+"""tests.helpers test_checkapitoken module"""
 import json
 from unittest.mock import patch, Mock
 import requests
@@ -14,7 +14,7 @@ VALID_RESPONSE_DATA = {"string": {"facility":"graylog-server","codename": "strin
 INVALID_RESPONSE_DATA = {"badval":"fail"}
 
 def test_check_apitoken_pass_mocked_valid_response(capsys,requests_mock) -> None:
-    """helpers test_check_apitoken_pass_mocked_valid_response function"""
+    """tests.helpers.test_check_apitoken_pass_mocked_valid_response function"""
     args = [VALID_TEST_URL_NONEXIST,HEADERS]
     requests_mock.get(VALID_TEST_URL_NONEXIST, json=VALID_RESPONSE_DATA, status_code=200)
     actual_data = check_api_token(args)
@@ -27,14 +27,14 @@ def test_check_apitoken_pass_mocked_valid_response(capsys,requests_mock) -> None
     assert captured.out == expected_output
 
 def test_check_apitoken_fail_mocked_invalid_response(requests_mock) -> None:
-    """helpers test_check_apitoken_fail_mocked_invalid_response"""
+    """tests.helpers.test_check_apitoken_fail_mocked_invalid_response function"""
     args = [VALID_TEST_URL_NONEXIST,HEADERS]
     requests_mock.get(VALID_TEST_URL_NONEXIST, json=INVALID_RESPONSE_DATA, status_code=200)
     actual_data = check_api_token(args)
     assert "[ERROR] cluster status is not ok. Status:" in actual_data
 
 def test_check_apitoken_fail_mocked_response_not_200(requests_mock) -> None:
-    """helpers test_check_apitoken_fail_mocked_response_not_200 function"""
+    """tests.helpers.test_check_apitoken_fail_mocked_response_not_200 function"""
     args = [VALID_TEST_URL_NONEXIST,HEADERS]
     requests_mock.get(VALID_TEST_URL_NONEXIST, json=INVALID_RESPONSE_DATA, status_code=404)
     actual_data = check_api_token(args)
@@ -42,19 +42,19 @@ def test_check_apitoken_fail_mocked_response_not_200(requests_mock) -> None:
 
 @pytest.fixture(name="mocked_args")
 def valid_args():
-    """helpers valid_args function"""
+    """tests.helpers.valid_args function"""
     return [
         VALID_TEST_URL_NONEXIST, HEADERS
     ]
 
 def test_check_apitoken_fail_request_exception(mocked_args) -> None:
-    """helpers test_check_apitoken_fail_request_exception function"""
+    """tests.helpers.test_check_apitoken_fail_request_exception function"""
     with patch("src.helpers.requests.get", side_effect=requests.exceptions.RequestException("BAD!")):
         result = check_api_token(mocked_args)
         assert "[ERROR]" in result and "BAD!" in result
 
 def test_check_apitoken_fail_json_decode_exception(mocked_args) -> None:
-    """helpers test_check_apitoken_fail_json_decode_exception function"""
+    """tests.helpers.test_check_apitoken_fail_json_decode_exception function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = "INVALID_JSON"

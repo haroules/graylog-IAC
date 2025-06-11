@@ -1,7 +1,8 @@
-"""test helpers test_doinit module"""
+"""tests.helpers test_doinit module"""
 from unittest.mock import patch
 from unittest import mock
 import pytest
+
 from src.helpers import do_init
 
 VALID_SCRIPT = "graylog_setup.py"
@@ -9,9 +10,10 @@ VALID_TOKEN = "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6"
 VALID_URL = "http://graylog.example.com"
 VALID_ARGS = [VALID_SCRIPT, VALID_TOKEN, VALID_URL]
 INVALID_ARGS = [VALID_SCRIPT, VALID_TOKEN]
+
 @pytest.fixture(name="mocked_patches")
 def mock_dependencies():
-    """test helpers mock_dependencies function"""
+    """tests.helpers.mock_dependencies function"""
     with patch("src.helpers.print") as mock_print, \
          patch("src.helpers.sys.exit") as mock_exit, \
          patch("src.helpers.global_vars") as mock_globals, \
@@ -35,7 +37,7 @@ def mock_dependencies():
         }
 
 def test_do_init_pass_fixture(mocked_patches,capsys) -> None:
-    """test helpers test_do_init_pass_fixture function"""
+    """tests.helpers.test_do_init_pass_fixture function"""
     mocked_patches["check_args"].return_value = VALID_ARGS
     mocked_patches["check_baseurl"].return_value = True
     mocked_patches["check_token"].return_value = True
@@ -49,17 +51,19 @@ def test_do_init_pass_fixture(mocked_patches,capsys) -> None:
 @mock.patch('src.helpers.check_args')
 @mock.patch('src.helpers.usage')
 def test_do_init_invalid_args(mock_usage, mock_check_args) -> None:
-    """test helpers test_do_init_invalid_args function"""
+    """tests.helpers.test_do_init_invalid_args function"""
     mock_check_args.return_value = "Invalid arguments"
     with mock.patch('builtins.print') as mock_print:
-        with pytest.raises(SystemExit):
+        with pytest.raises(SystemExit) as e:
             do_init(INVALID_ARGS)
     mock_check_args.assert_called_once_with(INVALID_ARGS)
     mock_print.assert_called_once_with("Invalid arguments")
     mock_usage.assert_called_once_with(INVALID_ARGS)
+    assert e.value.code == 1
+    assert e.type == SystemExit
 
 def test_do_init_fail_invalid_baseurl(mocked_patches) -> None:
-    """test helpers test_do_init_fail_invalid_baseurl function"""
+    """ttests.helpers.test_do_init_fail_invalid_baseurl function"""
     mocked_patches["check_args"].return_value = ["arg1"]
     mocked_patches["check_baseurl"].return_value = "baseurl error"
     do_init(VALID_ARGS)
@@ -67,7 +71,7 @@ def test_do_init_fail_invalid_baseurl(mocked_patches) -> None:
     mocked_patches["exit"].assert_called_once_with(1)
 
 def test_do_init_fail_invalid_token(mocked_patches) -> None:
-    """test helpers test_do_init_fail_invalid_token function"""
+    """tests.helpers.test_do_init_fail_invalid_token function"""
     mocked_patches["check_args"].return_value = ["arg1"]
     mocked_patches["check_baseurl"].return_value = True
     mocked_patches["check_token"].return_value = "token error"

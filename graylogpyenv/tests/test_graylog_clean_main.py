@@ -1,6 +1,4 @@
-"""
-graylog test_graylog_clean_main module
-"""
+"""test_graylog_clean_main module """
 from unittest.mock import patch
 from unittest import mock
 import pytest

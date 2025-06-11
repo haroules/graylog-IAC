@@ -1,6 +1,4 @@
-"""
-graylog_setup main routine def and imports
-"""
+""" graylog_setup main module """
 
 import sys
 from src.setup import create_indices

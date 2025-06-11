@@ -1,10 +1,11 @@
-"""clean test_remove_streams module"""
+"""tests.clean test_remove_streams module"""
 from unittest import mock
 from unittest.mock import Mock
 import requests
 import pytest
 
 from src.clean import remove_streams
+from tests.common.test_common import shared_asserts
 
 MOCK_BOOL_VERBOSE = True
 MOCK_STR_STREAMS_URL = "http://test-url.com/streams"
@@ -19,14 +20,14 @@ MOCK_REMOVE_STREAMS_ARGS = [MOCK_BOOL_VERBOSE, MOCK_STR_STREAMS_URL, MOCK_DICT_G
 
 @pytest.fixture(name="mocked_patches")
 def mocked_dependencies():
-    """clean mocked_dependencies function"""
+    """tests.clean.mocked_dependencies function"""
     with mock.patch('src.clean.get_list_stream_names_to_delete') as mock_list_stream_names_to_delete, \
         mock.patch('src.clean.get_clean_list_ids_to_delete') as mock_list_stream_ids_to_delete, \
         mock.patch('src.clean.get_list_all_stream_ids') as mock_list_all_stream_ids:
         yield mock_list_stream_names_to_delete, mock_list_stream_ids_to_delete, mock_list_all_stream_ids
 
 def test_remove_streams_pass_removables( mocked_patches, mocker, capsys) -> None:
-    """clean test_remove_streams_pass_removables function"""
+    """tests.clean.test_remove_streams_pass_removables function"""
     mock_get_list_stream_names_to_delete, mock_get_clean_list_stream_ids_to_delete, \
     mock_get_list_all_stream_ids = mocked_patches
     mock_get_list_all_stream_ids.return_value = MOCK_LIST_ALL_STREAM_IDS
@@ -53,7 +54,7 @@ def test_remove_streams_pass_removables( mocked_patches, mocker, capsys) -> None
     mock_get_list_stream_names_to_delete.assert_called_once()
 
 def test_remove_streams_pass_noremovable( mocker, capsys) -> None:
-    """clean test_remove_streams_pass_noremovables function"""
+    """tests.clean.test_remove_streams_pass_noremovable function"""
     mock_response = Mock()
     mock_response.status_code = 204
     mock_response.text = ''
@@ -70,7 +71,7 @@ def test_remove_streams_pass_noremovable( mocker, capsys) -> None:
     assert result is True
 
 def test_remove_streams_fail_to_delete(mocked_patches, mocker, capsys) -> None:
-    """clean test_remove_streams_fail_to_delete function"""
+    """tests.clean.test_remove_streams_fail_to_delete function"""
     mock_get_list_stream_names_to_delete, mock_get_clean_list_stream_ids_to_delete, \
         mock_get_list_all_stream_ids = mocked_patches
     mock_get_list_all_stream_ids.return_value = MOCK_LIST_ALL_STREAM_IDS
@@ -91,14 +92,13 @@ def test_remove_streams_fail_to_delete(mocked_patches, mocker, capsys) -> None:
         f"Removing Stream Titles {MOCK_LIST_STREAM_NAMES_TO_DELETE}\n"
         f"[ERROR] Failed to delete stream: {MOCK_LIST_STREAM_IDS_TO_DELETE[0]}\n\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
     mock_get_list_all_stream_ids.assert_called_once()
     mock_get_clean_list_stream_ids_to_delete.assert_called_once()
     mock_get_list_stream_names_to_delete.assert_called_once()
 
 def test_remove_streams_fail_request_exception(mocked_patches, mocker, capsys) -> None:
-    """clean test_remove_streams_fail_request_exception function"""
+    """tests.clean.test_remove_streams_fail_request_exception function"""
     mock_get_list_stream_names_to_delete, mock_get_clean_list_stream_ids_to_delete, \
         mock_get_list_all_stream_ids = mocked_patches
     mock_get_list_all_stream_ids.return_value = MOCK_LIST_ALL_STREAM_IDS
@@ -115,14 +115,13 @@ def test_remove_streams_fail_request_exception(mocked_patches, mocker, capsys) -
         f"Removing Stream Titles {MOCK_LIST_STREAM_NAMES_TO_DELETE}\n"
         "[ERROR] Request error in remove streams: Connection error\n\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
     mock_get_list_all_stream_ids.assert_called_once()
     mock_get_clean_list_stream_ids_to_delete.assert_called_once()
     mock_get_list_stream_names_to_delete.assert_called_once()
 
 def test_remove_streams_fail_json_decode_error(mocked_patches, mocker, capsys) -> None:
-    """clean est_remove_streams_fail_json_decode_error function"""
+    """tests.clean.test_remove_streams_fail_json_decode_error function"""
     mock_get_list_stream_names_to_delete, mock_get_clean_list_stream_ids_to_delete, \
         mock_get_list_all_stream_ids = mocked_patches
     mock_get_list_all_stream_ids.return_value = MOCK_LIST_ALL_STREAM_IDS
@@ -139,8 +138,7 @@ def test_remove_streams_fail_json_decode_error(mocked_patches, mocker, capsys) -
         f"Removing Stream Titles {MOCK_LIST_STREAM_NAMES_TO_DELETE}\n"
         "[ERROR] JSON decoding error in remove streams: Decoding error\n\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
     mock_get_list_all_stream_ids.assert_called_once()
     mock_get_clean_list_stream_ids_to_delete.assert_called_once()
     mock_get_list_stream_names_to_delete.assert_called_once()

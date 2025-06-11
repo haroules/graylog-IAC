@@ -1,4 +1,4 @@
-"""clean test_gen_list_index_set_names_to_delete module"""
+"""tests.clean test_gen_list_index_set_names_to_delete module"""
 import json
 from unittest.mock import Mock
 import requests
@@ -12,11 +12,11 @@ MOCK_LIST_INDEX_SET_IDS_TO_DELETE = ["0001"]
 
 @pytest.fixture(autouse=True)
 def patch_common_dependencies(mocker) -> None:
-    """clean patch_common_dependencies function"""
+    """tests.clean.patch_common_dependencies function"""
     mocker.patch('src.clean.jq', return_value=MOCK_JQ_RETURN)
 
 def test_gen_list_index_set_names_to_delete_pass(mocker) -> None:
-    """clean test_gen_list_index_set_names_to_delete_pass function"""
+    """tests.clean.test_gen_list_index_set_names_to_delete_pass function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = '{"title": "index1"}'
@@ -52,7 +52,7 @@ def test_gen_list_index_set_names_to_delete_pass(mocker) -> None:
 def test_gen_list_index_set_names_to_delete_failures(
     mocker, capsys, requests_get_behavior, json_loads_behavior,
     expected_output, exit_code) -> None:
-    """clean test_gen_list_index_set_names_to_delete_failures function"""
+    """tests.clean.test_gen_list_index_set_names_to_delete_failures function"""
     if isinstance(requests_get_behavior, Exception):
         mocker.patch('requests.get', side_effect=requests_get_behavior)
     else:

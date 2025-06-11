@@ -1,4 +1,4 @@
-"""clean test_index_sets_ids_common module"""
+"""tests.clean test_index_sets_ids_common module"""
 from unittest.mock import Mock
 import requests
 
@@ -18,26 +18,26 @@ MOCK_BUILTIN_IDS = ["0001", "0002", "0003"]
 MOCK_LIST_IDS_TO_DELETE = ["0004"]
 
 def test_get_clean_list_ids_to_delete_pass() -> None:
-    """clean test_get_clean_list_ids_to_delete_pass function"""
+    """tests.clean.test_get_clean_list_ids_to_delete_pass function"""
     result = get_clean_list_ids_to_delete(MOCK_LIST_ALL_IDS, MOCK_BUILTIN_IDS)
     assert result == MOCK_LIST_IDS_TO_DELETE
 
 def test_get_list_all_index_sets_ids_fail_request_exception(mocker) -> None:
-    """clean test_get_list_all_index_sets_ids_fail_request_exception function"""
+    """tests.clean.test_get_list_all_index_sets_ids_fail_request_exception function"""
     mocker.patch('requests.get', side_effect=requests.exceptions.RequestException("Connection error"))
     mock_exit = mocker.patch('sys.exit')
     get_list_all_index_sets_ids(MOCK_STR_INDEXSETS_URL, MOCK_DICT_GET_HEADERS)
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_all_builtin_index_set_ids_fail_request_exception(mocker) -> None:
-    """clean test_get_list_all_builtin_index_set_ids_fail_request_exception function"""
+    """tests.clean.test_get_list_all_builtin_index_set_ids_fail_request_exception function"""
     mocker.patch('requests.get', side_effect=requests.exceptions.RequestException("Connection error"))
     mock_exit = mocker.patch('sys.exit')
     get_list_all_builtin_index_set_ids(MOCK_STR_INDEXSETS_URL, MOCK_DICT_GET_HEADERS, ["index1"])
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_all_index_sets_ids_fail_json_decode_error(mocker) -> None:
-    """clean test_get_list_all_index_sets_ids_fail_json_decode_error function"""
+    """tests.clean.test_get_list_all_index_sets_ids_fail_json_decode_error function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = 'invalid json'
@@ -49,7 +49,7 @@ def test_get_list_all_index_sets_ids_fail_json_decode_error(mocker) -> None:
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_all_builtin_index_set_ids_fail_json_decode_error(mocker) -> None:
-    """clean test_get_list_all_builtin_index_set_ids_fail_json_decode_error function"""
+    """tests.clean.test_get_list_all_builtin_index_set_ids_fail_json_decode_error function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = 'invalid json'
@@ -61,7 +61,7 @@ def test_get_list_all_builtin_index_set_ids_fail_json_decode_error(mocker) -> No
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_stream_names_to_delete_fail_request_exception(mocker,capsys) -> None:
-    """clean test_get_list_stream_names_to_delete_fail_request_exception function"""
+    """tests.clean.test_get_list_stream_names_to_delete_fail_request_exception function"""
     mocker.patch('requests.get', side_effect=requests.exceptions.RequestException("Connection error"))
     mock_exit = mocker.patch('sys.exit')
     get_list_stream_names_to_delete(MOCK_LIST_STREAM_IDS, MOCK_STR_STREAMS_URL, MOCK_DICT_GET_HEADERS)
@@ -70,14 +70,14 @@ def test_get_list_stream_names_to_delete_fail_request_exception(mocker,capsys) -
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_all_stream_ids_fail_request_exception(mocker) -> None:
-    """clean test_get_list_all_stream_ids_fail_request_exception function"""
+    """tests.clean.test_get_list_all_stream_ids_fail_request_exception function"""
     mocker.patch('requests.get', side_effect=requests.exceptions.RequestException("Connection error"))
     mock_exit = mocker.patch('sys.exit')
     get_list_all_stream_ids(MOCK_STR_STREAMS_URL, MOCK_DICT_GET_HEADERS)
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_stream_names_to_delete_fail_json_decode_error(mocker,capsys) -> None:
-    """clean test_get_list_stream_names_to_delete_fail_json_decode_error function"""
+    """tests.clean.test_get_list_stream_names_to_delete_fail_json_decode_error function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = 'invalid json'
@@ -91,7 +91,7 @@ def test_get_list_stream_names_to_delete_fail_json_decode_error(mocker,capsys) -
     mock_exit.assert_called_once_with(1)
 
 def test_get_list_all_stream_ids_fail_json_decode_error(mocker) -> None:
-    """clean test_get_list_all_stream_ids_fail_json_decode_error function"""
+    """tests.clean.test_get_list_all_stream_ids_fail_json_decode_error function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = 'invalid json'

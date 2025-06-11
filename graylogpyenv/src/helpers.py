@@ -1,5 +1,4 @@
 """src.helpers module"""
-
 import sys
 import base64
 import os
@@ -9,7 +8,6 @@ import requests
 from validators import url
 from jqpy import jq
 
-# from source
 import global_vars
 
 def exit_with_message(message: str, error_code: int) -> None:
@@ -28,7 +26,8 @@ def is_json_valid(file_path: str) -> bool:
             if isinstance(data,dict):
                 return True
     except json.JSONDecodeError:
-        exit_with_message(f"[ERROR] Problem decoding json in is_json_valid: {file_path}",1)
+        #exit_with_message(f"[ERROR] Problem decoding json in is_json_valid: {file_path}",1)
+        return False
     return False
 
 def contains_sublist(sub_list: list, main_list: list) -> bool:
@@ -208,7 +207,7 @@ def check_args(args :list) -> Union[str, list[str,str,str,str], list[str,str,str
     try:
         if len(args) < 3 or len(args) > 4:   # check 2 or 3 args passed, argv has script name as arg so total should be 3 or 4
             return f"[ERROR] Wrong number of script arguments. Number of args passed:{len(args) - 1}"
-        if len(args[1]) != 52:  # check token is 52 characters
+        if len(args[1]) != 51:  # check token is 51 characters
             return f"[ERROR] Token was wrong length. Length was:{len(args[1])}"
         if not args[1].isalnum():  # check token is alpha numeric characters only
             return "[ERROR] Token had non alphanumeric characters."

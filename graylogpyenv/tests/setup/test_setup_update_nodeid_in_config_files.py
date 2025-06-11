@@ -1,10 +1,11 @@
 """tests.setup test_setup_update_nodeid_in_config_files module"""
-from pathlib import Path
 from unittest.mock import Mock
 import requests
 import pytest
 
 from src.setup import update_nodeid_in_input_config_files
+from tests.common.test_common import create_sample_input_config_dir
+from tests.common.test_common import shared_asserts
 
 MOCK_NODE_URL="https://mock.api/nodeidurl"
 MOCK_DICT_GET_HEADERS={"Authorization": "Bearer mock"}
@@ -13,19 +14,8 @@ MOCK_JQ_RETURN = {"cluster_id": "string_cluster_id", "node_id": "new_string_node
     "short_node_id": "string_short_id", "hostname": "server", "is_leader": True, "is_master": True}
 MOCK_VERBOSE = True
 
-#global_vars.STR_NODE_ID_URL = args[2] + "/system/cluster/node"
-
-def create_sample_input_config_dir(base_dir: Path, name: str, file_count: int = 1) -> Path:
-    """backup create_sample_config_dir function"""
-    config_dir = base_dir / name
-    config_dir.mkdir()
-    for i in range(file_count):
-        file_path = config_dir / f"config_{i}.json"
-        file_path.write_text('{"node": "node_id_string", "global": True, "title": "input_title"}')
-    return config_dir
-
 def test_update_nodeid_in_input_config_files_pass_verbose(mocker,tmp_path,capsys) -> None:
-    """src.setup test_update_nodeid_in_input_config_files_pass_verbose function"""
+    """src.setup.test_update_nodeid_in_input_config_files_pass_verbose function"""
     config = create_sample_input_config_dir(tmp_path, "configA")
     list_configs = [config.as_posix()+ "/config_0.json"]
     mock_response = Mock()
@@ -47,7 +37,7 @@ def test_update_nodeid_in_input_config_files_pass_verbose(mocker,tmp_path,capsys
     assert captured.out == expected_output
 
 def test_update_nodeid_in_input_config_files_fail_getnodeid(mocker,capsys) -> None:
-    """src.setup test_update_nodeid_in_input_config_files_fail_getnodeid function"""
+    """src.setup.test_update_nodeid_in_input_config_files_fail_getnodeid function"""
     mock_response = Mock()
     mock_response.status_code = 404
     mock_response.text = {"Bad response"}
@@ -59,11 +49,10 @@ def test_update_nodeid_in_input_config_files_fail_getnodeid(mocker,capsys) -> No
     expected_output = (
         "[ERROR] API call to: https://mock.api/nodeidurl Failed. Message: {'Bad response'}\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_nodeid_in_input_config_files_fail_file_update(mocker,tmp_path,capsys) -> None:
-    """src.setup test_update_nodeid_in_input_config_files_fail_file_update function"""
+    """src.setup.test_update_nodeid_in_input_config_files_fail_file_update function"""
     config = create_sample_input_config_dir(tmp_path, "configA")
     list_configs = [config.as_posix()+ "/config_0.json"]
     mock_response = Mock()
@@ -83,11 +72,10 @@ def test_update_nodeid_in_input_config_files_fail_file_update(mocker,tmp_path,ca
         f"    Updating node id in:{path_2_file}\n"
         f"[ERROR] Couldn't update config file {path_2_file} with new_string_node_id\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_nodeid_in_input_config_files_fail_file_notfound(mocker,capsys) -> None:
-    """src.setup test_update_nodeid_in_input_config_files_fail_file_notfound function"""
+    """src.setup.test_update_nodeid_in_input_config_files_fail_file_notfound function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = MOCK_JQ_RETURN
@@ -104,11 +92,10 @@ def test_update_nodeid_in_input_config_files_fail_file_notfound(mocker,capsys) -
         "    Updating node id in:bad_path\n"
         f"{message} [Errno 2] No such file or directory: 'bad_path'\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_nodeid_in_input_config_files_fail_json_decode(mocker,capsys) -> None:
-    """src.setup test_update_nodeid_in_input_config_files_fail_json_decode function"""
+    """src.setup.test_update_nodeid_in_input_config_files_fail_json_decode function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = "Bad json response"
@@ -121,11 +108,10 @@ def test_update_nodeid_in_input_config_files_fail_json_decode(mocker,capsys) -> 
     expected_output = (
         f"{message} Expecting value: line 1 column 1 (char 0)\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_update_nodeid_in_input_config_files_fail_requests(mocker,capsys) -> None:
-    """src.setup test_update_nodeid_in_input_config_files_fail_json_decode function"""
+    """src.setup.test_update_nodeid_in_input_config_files_fail_requests function"""
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = "Bad json response"
@@ -137,5 +123,4 @@ def test_update_nodeid_in_input_config_files_fail_requests(mocker,capsys) -> Non
     expected_output = (
         "[ERROR] Request error in update_nodeid_in_input_config_files: Connection error\n"
     )
-    assert captured.out == expected_output
-    assert e.value.code == 1
+    shared_asserts(captured.out,expected_output,e.value.code,e.type)

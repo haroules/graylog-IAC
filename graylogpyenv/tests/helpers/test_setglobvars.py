@@ -1,4 +1,4 @@
-"""helpers test_setglobalvars module"""
+"""tests.helpers test_setglobalvars module"""
 import os
 import global_vars
 
@@ -14,17 +14,17 @@ VALID_CWD = os.path.dirname(os.getcwd())
 VERBOSE = False
 
 def check_exist_isdir(path) -> None:
-    """helpers check_exist_isdir function"""
+    """tests.helpers.check_exist_isdir function"""
     assert os.path.exists(path)
     assert os.path.isdir(path)
 
 def check_exist_isfile(path) -> None:
-    """helpers check_exist_isfile function"""
+    """tests.helpers.check_exist_isfile function"""
     assert os.path.exists(path)
     assert os.path.isfile(path)
 
 def validate_url_sets(valid_url :str) -> None:
-    """helpers validate_url_sets function"""
+    """tests.helpers.validate_url_sets function"""
     assert global_vars.STR_INPUTS_URL == valid_url + "/system/inputs"
     assert global_vars.STR_INDEXSETS_URL == valid_url + "/system/indices/index_sets"
     assert global_vars.STR_NODE_ID_URL == valid_url + "/system/cluster/node"
@@ -32,7 +32,7 @@ def validate_url_sets(valid_url :str) -> None:
     assert global_vars.STR_CLUSTER_URL == valid_url + "/cluster"
 
 def validate_path_sets(valid_cwd :str) -> None:
-    """helpers validate_path_sets function"""
+    """tests.helpers.validate_path_sets function"""
     assert global_vars.STR_PTH_HOST_CFG_DIR == valid_cwd + "/host-configs"
     check_exist_isdir(global_vars.STR_PTH_HOST_CFG_DIR)
     assert global_vars.STR_PTH_HOST_CFG_TEMPLATE == valid_cwd + "/host-config-templates"
@@ -59,7 +59,7 @@ def validate_path_sets(valid_cwd :str) -> None:
     check_exist_isfile(global_vars.STR_PTH_SCHEMA_STREAM)
 
 def test_set_global_vars_output_3_args(capsys) -> None:
-    """helpers test_set_global_vars_output_3_args function"""
+    """htests.helpers.test_set_global_vars_output_3_args function"""
     args = [VALID_SCRIPT_SETUP, VALID_TOKEN, VALID_URL, VALID_CWD]
     set_global_vars(args)
     captured = capsys.readouterr()
@@ -77,7 +77,7 @@ def test_set_global_vars_output_3_args(capsys) -> None:
     validate_path_sets(VALID_CWD)
 
 def test_set_global_vars_output_4_args(capsys) -> None:
-    """helpers test_set_global_vars_output_4_args function"""
+    """tests.helpers.test_set_global_vars_output_4_args function"""
     args = [VALID_SCRIPT_SETUP, VALID_TOKEN, VALID_URL, VERBOSE, VALID_CWD]
     set_global_vars(args)
     captured = capsys.readouterr()
@@ -90,8 +90,8 @@ def test_set_global_vars_output_4_args(capsys) -> None:
     validate_url_sets(VALID_URL)
     validate_path_sets(VALID_CWD)
 
-def test_set_global_vars_verify_output_1_args(capsys) -> None:
-    """helpers test_set_global_vars_verify_output_1_args function"""
+def test_set_global_vars_verify_output_1_arg(capsys) -> None:
+    """tests.helpers.test_set_global_vars_verify_output_1_arg function"""
     args = [VALID_SCRIPT_VERIFY,VALID_CWD]
     set_global_vars_verify(args)
     captured = capsys.readouterr()
@@ -104,7 +104,7 @@ def test_set_global_vars_verify_output_1_args(capsys) -> None:
     validate_path_sets(VALID_CWD)
 
 def test_set_global_vars_verify_output_2_args(capsys) -> None:
-    """helpers test_set_global_vars_verify_output_2_args function"""
+    """tests.helpers.test_set_global_vars_verify_output_2_args function"""
     args = [VALID_SCRIPT_VERIFY, VERBOSE, VALID_CWD]
     set_global_vars_verify(args)
     captured = capsys.readouterr()

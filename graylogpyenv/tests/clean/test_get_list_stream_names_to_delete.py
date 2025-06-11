@@ -1,4 +1,4 @@
-"""clean test_get_list_stream_names_to_delete module"""
+"""tests.clean test_get_list_stream_names_to_delete module"""
 import json
 from unittest.mock import Mock
 
@@ -10,7 +10,7 @@ MOCK_STR_STREAMS_URL = "http://test-url.com/streams"
 MOCK_DICT_GET_HEADERS = {"Authorization": "Bearer token"}
 
 def test_get_list_stream_names_to_delete_pass(mocker) -> None:
-    '''clean test_get_list_stream_names_to_delete_pass function'''
+    '''tests.clean.test_get_list_stream_names_to_delete_pass function'''
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.text = '{"streams": [{"id": "00001", "title": "stream1"}]}'
@@ -22,7 +22,7 @@ def test_get_list_stream_names_to_delete_pass(mocker) -> None:
     assert result == MOCK_JQ_RETURN
 
 def test_get_list_stream_names_to_delete_fail_bad_response_code(mocker,capsys) -> None:
-    """clean test_get_list_stream_names_to_delete_fail_bad_response_code function"""
+    """tests.clean.test_get_list_stream_names_to_delete_fail_bad_response_code function"""
     mock_response = Mock()
     mock_response.status_code = 404
     mock_response.text = ''

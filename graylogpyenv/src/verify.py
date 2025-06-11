@@ -1,5 +1,4 @@
 """src.verify module"""
-# from pyenv
 import os
 import json
 from pathlib import Path
@@ -7,7 +6,6 @@ from jqpy import jq
 from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 
-# from source
 from src.helpers import exit_with_message
 from src.helpers import is_json_valid
 
@@ -55,27 +53,24 @@ def verify_dirs_files_json(bool_verbose :bool, list_config_directories :list) ->
     str_config_file = "" # loop var contains current config file being checked
     str_config_file_path = "" # built path to a config file
     int_config_file_count = 0
-    try:
-        for str_config_dir in list_config_directories:
+    for str_config_dir in list_config_directories:
+        if bool_verbose:
+            print(f"Validating data directory:{str_config_dir}")
+        if not os.path.isdir(str_config_dir): # Check directory exist and is directory
+            exit_with_message(f"[ERROR] {str_config_dir} Doesn't exist, or not a dir.",1)
+        # Check config or schema file exists as a file, has json extension,
+        # and it passes json validity check
+        for str_config_file in os.listdir(str_config_dir):
+            str_config_file_path = os.path.join(str_config_dir,str_config_file)
             if bool_verbose:
-                print(f"Validating data directory:{str_config_dir}")
-            if not os.path.isdir(str_config_dir): # Check directory exist and is directory
-                exit_with_message(f"[ERROR] {str_config_dir} Doesn't exist, or not a dir.",1)
-            # Check config or schema file exists as a file, has json extension,
-            # and it passes json validity check
-            for str_config_file in os.listdir(str_config_dir):
-                str_config_file_path = os.path.join(str_config_dir,str_config_file)
-                if bool_verbose:
-                    print(f"  Validating file:{str_config_file_path}")
-                if not os.path.isfile(str_config_file_path):
-                    exit_with_message(f"[ERROR] {str_config_file_path} is not a valid file.",1)
-                if Path(str_config_file_path).suffix != ".json":
-                    exit_with_message(f"[ERROR] {str_config_file_path} no .json extension.",1)
-                if not is_json_valid(str_config_file_path):
-                    exit_with_message(f"[ERROR] {str_config_file_path} failed json decode.",1)
-                int_config_file_count += 1
-    except os.error as e:
-        exit_with_message(f"[ERROR] An OSError occurred in verify_dirs_files_json: {e}",1)
+                print(f"  Validating file:{str_config_file_path}")
+            if not os.path.isfile(str_config_file_path):
+                exit_with_message(f"[ERROR] {str_config_file_path} is not a valid file.",1)
+            if Path(str_config_file_path).suffix != ".json":
+                exit_with_message(f"[ERROR] {str_config_file_path} no .json extension.",1)
+            if not is_json_valid(str_config_file_path):
+                exit_with_message(f"[ERROR] {str_config_file_path} failed json decode.",1)
+            int_config_file_count += 1
     return int_config_file_count
 
 def verify_configfiles_filesystem(global_vars_list :list) -> None:

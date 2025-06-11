@@ -1,6 +1,4 @@
-"""
-graylog clean main module
-"""
+""" graylog_clean main module """
 import sys
 from src.helpers import do_init
 from src.clean import remove_streams
