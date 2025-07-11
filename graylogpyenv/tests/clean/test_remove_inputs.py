@@ -1,23 +1,23 @@
-"""tests.clean test_remove_inputs module"""
+"""Module:tests.clean.test_remove_inputs"""
 from unittest.mock import patch, Mock
 import requests
 import pytest
 
 from src.clean import remove_inputs
 from tests.common.test_common import shared_asserts
+from tests.common.test_common import BOOL_VERBOSE_TRUE
+from tests.common.test_common import MOCK_DICT_GET_HEADERS
+from tests.common.test_common import MOCK_DICT_POST_HEADERS
+from tests.common.test_common import MOCK_STR_INPUTS_URL
 
-MOCK_BOOL_VERBOSE = True
-MOCK_STR_INPUTS_URL = "http://test-url.com/inputs"
-MOCK_DICT_GET_HEADERS = {"Authorization": "Bearer token"}
-MOCK_DICT_POST_HEADERS = {"Authorization": "Bearer token"}
-MOCK_REMOVE_INPUTS_ARGS = [MOCK_BOOL_VERBOSE, MOCK_STR_INPUTS_URL, MOCK_DICT_GET_HEADERS, MOCK_DICT_POST_HEADERS]
+MOCK_REMOVE_INPUTS_ARGS = [BOOL_VERBOSE_TRUE, MOCK_STR_INPUTS_URL, MOCK_DICT_GET_HEADERS, MOCK_DICT_POST_HEADERS]
 MOCK_LIST_INPUTS = (["id1", "id2"], ["Input 1", "Input 2"])
 MOCK_FAIL_LIST = (["id1"], ["Input 1"])
 
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_success_removables(mock_gen_list, mock_delete, capsys) -> None:
-    """tests.clean.test_remove_inputs_success_removables function"""
+    """Function:test_remove_inputs_success_removables"""
     mock_gen_list.return_value = MOCK_LIST_INPUTS
     mock_response = Mock()
     mock_response.status_code = 204
@@ -35,7 +35,7 @@ def test_remove_inputs_success_removables(mock_gen_list, mock_delete, capsys) ->
 
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_success_noremovables(mock_gen_list, capsys) -> None:
-    """tests.clean.test_remove_inputs_success_noremovables function"""
+    """Function:test_remove_inputs_success_noremovables"""
     mock_gen_list.return_value = ([], [])
     assert remove_inputs(*MOCK_REMOVE_INPUTS_ARGS) is True
     captured = capsys.readouterr()
@@ -49,7 +49,7 @@ def test_remove_inputs_success_noremovables(mock_gen_list, capsys) -> None:
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_fail_non_204_response(mock_gen_list, mock_delete, capsys) -> None:
-    """tests.clean.test_remove_inputs_fail_non_204_response function"""
+    """Function:test_remove_inputs_fail_non_204_response"""
     mock_gen_list.return_value = MOCK_FAIL_LIST
     mock_response = Mock()
     mock_response.status_code = 400
@@ -70,7 +70,7 @@ def test_remove_inputs_fail_non_204_response(mock_gen_list, mock_delete, capsys)
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_fail_request_exception(mock_gen_list, mock_delete, capsys) -> None:
-    """tests.clean.test_remove_inputs_fail_request_exception function"""
+    """Function:test_remove_inputs_fail_request_exception"""
     mock_gen_list.return_value = MOCK_FAIL_LIST
     mock_delete.side_effect = requests.exceptions.RequestException("Network error")
     with pytest.raises(SystemExit) as e:
@@ -88,7 +88,7 @@ def test_remove_inputs_fail_request_exception(mock_gen_list, mock_delete, capsys
 @patch('src.clean.requests.delete')
 @patch('src.clean.gen_list_inputs_to_delete')
 def test_remove_inputs_fail_value_error(mock_gen_list, mock_delete, capsys) -> None:
-    """tests.clean.test_remove_inputs_fail_value_error function"""
+    """Function:test_remove_inputs_fail_value_error"""
     mock_gen_list.return_value = MOCK_FAIL_LIST
     mock_delete.side_effect = ValueError("JSON error")
     with pytest.raises(SystemExit) as e:

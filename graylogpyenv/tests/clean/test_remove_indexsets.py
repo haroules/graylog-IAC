@@ -1,27 +1,27 @@
-"""tests.clean test_remove_indexsets module"""
+"""Module:tests.clean.test_remove_indexsets"""
 from unittest import mock
-from unittest.mock import Mock
 import requests
 import pytest
 
 from src.clean import remove_indexsets
+from tests.common.test_common import mock_get_response
 from tests.common.test_common import shared_asserts
+from tests.common.test_common import BOOL_VERBOSE_TRUE
+from tests.common.test_common import MOCK_DICT_GET_HEADERS
+from tests.common.test_common import MOCK_DICT_POST_HEADERS
+from tests.common.test_common import MOCK_STR_INDEXSETS_URL
 
-MOCK_BOOL_VERBOSE = True
-MOCK_STR_INDEXSETS_URL = "http://test-url.com/index_sets"
-MOCK_DICT_GET_HEADERS = {"Authorization": "Bearer token"}
-MOCK_DICT_POST_HEADERS = {"Authorization": "Bearer token"}
 MOCK_LIST_BUILTIN_INDEX_SET_NAMES = ["index1", "index2", "index3"]
 MOCK_LIST_BUILTIN_INDEX_SET_IDS = ["0001", "0002", "0003"]
 MOCK_LIST_ALL_INDEX_SETS_IDS = ["0001", "0002", "0003", "0004"]
 MOCK_LIST_INDEX_SET_IDS_TO_DELETE = ["0004"]
 MOCK_LIST_INDEX_SET_NAMES_TO_DELETE = ["index4"]
-MOCK_REMOVE_INDEXSETS_ARGS = [MOCK_BOOL_VERBOSE, MOCK_STR_INDEXSETS_URL, MOCK_DICT_GET_HEADERS,
+MOCK_REMOVE_INDEXSETS_ARGS = [BOOL_VERBOSE_TRUE, MOCK_STR_INDEXSETS_URL, MOCK_DICT_GET_HEADERS,
                 MOCK_DICT_POST_HEADERS, MOCK_LIST_BUILTIN_INDEX_SET_NAMES]
 
 @pytest.fixture(name="mocked_patches")
 def mocked_dependencies():
-    """tests.clean.mocked_dependencies function"""
+    """Function:mocked_dependencies"""
     with mock.patch('src.clean.gen_list_index_set_names_to_delete') as list_index_set_names_to_delete, \
         mock.patch('src.clean.get_clean_list_ids_to_delete') as list_index_set_ids_to_delete, \
         mock.patch('src.clean.get_list_all_builtin_index_set_ids') as list_builtin_index_set_ids, \
@@ -29,17 +29,14 @@ def mocked_dependencies():
         yield list_index_set_names_to_delete, list_index_set_ids_to_delete, list_builtin_index_set_ids, list_all_index_sets_ids
 
 def test_remove_indexsets_pass_removables(mocked_patches,mocker,capsys) -> None:
-    """tests.clean.test_remove_indexsets_pass_removables function"""
+    """Function:test_remove_indexsets_pass_removables"""
     mock_gen_list_index_set_names_to_delete, mock_get_list_index_set_ids_to_delete,\
         mock_get_list_builtin_index_set_ids, mock_get_list_all_index_sets_ids = mocked_patches
     mock_get_list_all_index_sets_ids.return_value = MOCK_LIST_ALL_INDEX_SETS_IDS
     mock_get_list_builtin_index_set_ids.return_value = MOCK_LIST_BUILTIN_INDEX_SET_IDS
     mock_get_list_index_set_ids_to_delete.return_value = MOCK_LIST_INDEX_SET_IDS_TO_DELETE
     mock_gen_list_index_set_names_to_delete.return_value = MOCK_LIST_INDEX_SET_NAMES_TO_DELETE
-    mock_response = Mock()
-    mock_response.status_code = 204
-    mock_response.text = ''
-    mock_response.raise_for_status = Mock()
+    mock_response = mock_get_response(204,'')
     mocker.patch('requests.delete', return_value = mock_response)
     result = remove_indexsets(*MOCK_REMOVE_INDEXSETS_ARGS)
     captured = capsys.readouterr()
@@ -57,11 +54,7 @@ def test_remove_indexsets_pass_removables(mocked_patches,mocker,capsys) -> None:
     mock_gen_list_index_set_names_to_delete.assert_called_once()
 
 def test_remove_indexsets_pass_noremovable(mocker,capsys) -> None:
-    """tests.clean.test_remove_indexsets_pass_noremovable function"""
-    mock_response = Mock()
-    mock_response.status_code = 204
-    mock_response.text = ''
-    mock_response.raise_for_status = Mock()
+    """Function:test_remove_indexsets_pass_noremovable"""
     mocker.patch('src.clean.get_list_all_index_sets_ids', return_value = [])
     result = remove_indexsets(*MOCK_REMOVE_INDEXSETS_ARGS)
     captured = capsys.readouterr()
@@ -74,17 +67,14 @@ def test_remove_indexsets_pass_noremovable(mocker,capsys) -> None:
     assert result is True
 
 def test_remove_indexsets_fail_to_delete( mocked_patches, mocker, capsys) -> None:
-    """tests.clean.test_remove_indexsets_fail_to_delete function"""
+    """Function:test_remove_indexsets_fail_to_delete"""
     mock_gen_list_index_set_names_to_delete, mock_get_list_index_set_ids_to_delete, \
         mock_get_list_builtin_index_set_ids, mock_get_list_all_index_sets_ids = mocked_patches
     mock_get_list_all_index_sets_ids.return_value = MOCK_LIST_ALL_INDEX_SETS_IDS
     mock_get_list_builtin_index_set_ids.return_value = MOCK_LIST_BUILTIN_INDEX_SET_IDS
     mock_get_list_index_set_ids_to_delete.return_value = MOCK_LIST_INDEX_SET_IDS_TO_DELETE
     mock_gen_list_index_set_names_to_delete.return_value = MOCK_LIST_INDEX_SET_NAMES_TO_DELETE
-    mock_response = Mock()
-    mock_response.status_code = 404
-    mock_response.text = ''
-    mock_response.raise_for_status = Mock()
+    mock_response = mock_get_response(404,'')
     mocker.patch('requests.delete', return_value=mock_response)
     with pytest.raises(SystemExit) as e:
         remove_indexsets(*MOCK_REMOVE_INDEXSETS_ARGS)
@@ -102,7 +92,7 @@ def test_remove_indexsets_fail_to_delete( mocked_patches, mocker, capsys) -> Non
     mock_gen_list_index_set_names_to_delete.assert_called_once()
 
 def test_remove_indexsets_fail_request_exception(mocked_patches, mocker, capsys) -> None:
-    """tests.clean.test_remove_indexsets_fail_request_exception"""
+    """Function:test_remove_indexsets_fail_request_exception"""
     mock_gen_list_index_set_names_to_delete, mock_get_list_index_set_ids_to_delete, \
         mock_get_list_builtin_index_set_ids, mock_get_list_all_index_sets_ids = mocked_patches
     mock_get_list_all_index_sets_ids.return_value = MOCK_LIST_ALL_INDEX_SETS_IDS
@@ -125,9 +115,8 @@ def test_remove_indexsets_fail_request_exception(mocked_patches, mocker, capsys)
     mock_get_list_builtin_index_set_ids.assert_called_once()
     mock_gen_list_index_set_names_to_delete.assert_called_once()
 
-# Test: ValueError (though unlikely here, covered for completeness)
 def test_remove_indexsets_value_error(mocked_patches, mocker, capsys) -> None:
-    """tests.clean.test_remove_indexsets_value_error"""
+    """Function:test_remove_indexsets_value_error"""
     mock_gen_list_index_set_names_to_delete, mock_get_list_index_set_ids_to_delete, \
         mock_get_list_builtin_index_set_ids, mock_get_list_all_index_sets_ids = mocked_patches
     mock_get_list_all_index_sets_ids.return_value = MOCK_LIST_ALL_INDEX_SETS_IDS

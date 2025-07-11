@@ -1,4 +1,4 @@
-""" graylog_setup main module """
+"""Module:graylog_setup"""
 
 import sys
 from src.setup import create_indices
@@ -11,7 +11,7 @@ from src.backup import make_config_backup
 import global_vars
 
 def main():
-    """Function graylog_setup.main"""
+    """Function:graylog_setup_main"""
     validargs = do_init(sys.argv)
     make_config_backup(validargs,global_vars.LIST_CONFIG_DIRECTORIES)
     create_indices(global_vars.BOOL_VERBOSE,global_vars.STR_PTH_INDICES_CFG,
@@ -30,7 +30,7 @@ def main():
                    global_vars.DICT_POST_HEADERS)
 
 def init():
-    """Function graylog_setup.init"""
+    """Function:graylog_setup_init"""
     if __name__ == "__main__":
         sys.exit(main())
 init()

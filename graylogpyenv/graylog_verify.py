@@ -1,4 +1,4 @@
-""" graylog_verify main module """
+"""Module:graylog_verify"""
 
 import sys
 from src.verify import verify_configfiles_filesystem
@@ -13,7 +13,7 @@ from src.helpers import usage
 import global_vars
 
 def main():
-    """Function graylog_verify.main"""
+    """Function:graylog_verify_main"""
     validargs = check_args_verify(sys.argv)
     if isinstance(validargs,str):
         print(validargs)
@@ -42,7 +42,7 @@ def main():
         global_vars.STR_PTH_STREAMS_CFG)
 
 def init():
-    """Function graylog_verify.init"""
+    """Function:graylog_verify_init"""
     if __name__ == "__main__":
         sys.exit(main())
 init()

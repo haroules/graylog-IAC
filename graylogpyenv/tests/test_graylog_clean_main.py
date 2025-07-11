@@ -1,21 +1,15 @@
-"""test_graylog_clean_main module """
+"""Module:test_graylog_clean_main"""
 from unittest.mock import patch
 from unittest import mock
 import pytest
 import graylog_clean
+from tests.common.test_common import MOCK_TEST_URL
+from tests.common.test_common import MOCK_TOKEN
 
-VALID_SCRIPT = "graylog_clean.py"
-# A valid 52-char alphanumeric token
-VALID_TOKEN = "A1B2C3D4E5F6G7H8I9J1K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6"
-VALID_URL = "http://graylogclean.example.com"
-EXPECTED_VALID_OUTPUT = (
-    "Checking arguments and validating the inputs.\n"
-    "[Done] Checking arguments and validating the inputs.\n\n"
-)
-args = [VALID_SCRIPT, VALID_TOKEN, VALID_URL]
+args = ["graylog_clean.py", MOCK_TOKEN, MOCK_TEST_URL]
 
-def test_graylog_clean_main():
-    """Function test_graylog_clean_main"""
+def test_graylog_clean_init() -> None:
+    """Function:test_graylog_clean_init"""
     with patch.object(graylog_clean,"main", return_value=33):
         with patch.object(graylog_clean, "__name__", "__main__"):
             with patch.object(graylog_clean, "do_init", return_value=args):
@@ -27,10 +21,10 @@ def test_graylog_clean_main():
 @mock.patch('graylog_clean.remove_inputs')
 @mock.patch('graylog_clean.remove_streams')
 @mock.patch('graylog_clean.do_init')
-def test_graylog_clean_main_success(
+def test_graylog_clean_main_pass(
     mock_do_init, mock_remove_streams, mock_remove_inputs, mock_remove_indexsets
-):
-    """Function test_graylog_clean_main_success"""
+) -> None:
+    """Function:test_graylog_clean_main_pass"""
     mock_do_init.return_value = {"arg1": "value1"}
     mock_remove_streams.return_value = True
     mock_remove_inputs.return_value = True
@@ -44,8 +38,8 @@ def test_graylog_clean_main_success(
 
 @mock.patch('graylog_clean.do_init')
 @mock.patch('graylog_clean.remove_streams')
-def test_graylog_clean_main_remove_streams_failed(mock_remove_streams, mock_do_init):
-    """Function test_graylog_clean_main_remove_streams_failed"""
+def test_graylog_clean_main_remove_streams_fail(mock_remove_streams, mock_do_init) -> None:
+    """Function:test_graylog_clean_main_remove_streams_fail"""
     mock_do_init.return_value = {"arg1": "value1"}
     mock_remove_streams.return_value = False
     with mock.patch('sys.argv', ["graylog_clean.py"]),pytest.raises(SystemExit) as e:
@@ -55,8 +49,8 @@ def test_graylog_clean_main_remove_streams_failed(mock_remove_streams, mock_do_i
 @mock.patch('graylog_clean.do_init')
 @mock.patch('graylog_clean.remove_streams')
 @mock.patch('graylog_clean.remove_inputs')
-def test_graylog_clean_main_remove_inputs_failed(mock_remove_inputs,mock_remove_streams,mock_do_init):
-    """Function test_graylog_clean_main_remove_inputs"""
+def test_graylog_clean_main_remove_inputs_fail(mock_remove_inputs,mock_remove_streams,mock_do_init) -> None:
+    """Function:test_graylog_clean_main_remove_inputs_fail"""
     mock_do_init.return_value = {"arg1": "value1"}
     mock_remove_streams.return_value = True
     mock_remove_inputs.return_value = False
@@ -68,9 +62,9 @@ def test_graylog_clean_main_remove_inputs_failed(mock_remove_inputs,mock_remove_
 @mock.patch('graylog_clean.remove_streams')
 @mock.patch('graylog_clean.remove_inputs')
 @mock.patch('graylog_clean.remove_indexsets')
-def test_graylog_clean_main_remove_indexsets(mock_remove_indexsets,mock_remove_inputs,
-                            mock_remove_streams, mock_do_init):
-    """Function test_graylog_clean_main_remove_indexsets"""
+def test_graylog_clean_main_remove_indexsets_fail(mock_remove_indexsets,mock_remove_inputs,
+    mock_remove_streams, mock_do_init) -> None:
+    """Function:test_graylog_clean_main_remove_indexsets_fail"""
     mock_do_init.return_value = {"arg1": "value1"}
     mock_remove_streams.return_value = True
     mock_remove_inputs.return_value = True

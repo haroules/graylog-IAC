@@ -1,0 +1,31 @@
+{
+  "index_set_id": "samplehost_index_setid",
+  "matching_type": "AND",
+  "remove_matches_from_default_stream": true,
+  "description": "default stream for samplehost",
+  "rules": [
+    {
+      "field": "source",
+      "description": "",
+      "type": 1,
+      "value": "samplehost.local.net",
+      "inverted": false
+    },
+    {
+      "field": "input",
+      "description": "",
+      "type": 1,
+      "inverted": false,
+      "value": "samplehost-input"
+    },
+    {
+      "field": "application_name",
+      "description": "",
+      "type": 1,
+      "inverted": true,
+      "value": "filterlog"
+    }
+  ],
+  "title": "samplehost-stream",
+  "content_pack": null
+}

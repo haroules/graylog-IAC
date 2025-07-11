@@ -1,30 +1,29 @@
-"""tests.helpers test_setglobalvars module"""
+"""Module:tests.helpers.test_setglobalvars"""
 import os
 import global_vars
 
 from src.helpers import set_global_vars
 from src.helpers import set_global_vars_verify
+from tests.common.test_common import MOCK_TEST_URL
+from tests.common.test_common import BOOL_VERBOSE_FALSE
+from tests.common.test_common import MOCK_TOKEN
+from tests.common.test_common import MOCK_SCRIPT
 
-VALID_SCRIPT_SETUP = "graylog_setup.py"
 VALID_SCRIPT_VERIFY = "graylog_verify.py"
-
-VALID_TOKEN = "A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6"
-VALID_URL = "http://graylog.example.com"
 VALID_CWD = os.path.dirname(os.getcwd())
-VERBOSE = False
 
 def check_exist_isdir(path) -> None:
-    """tests.helpers.check_exist_isdir function"""
+    """Function:check_exist_isdir"""
     assert os.path.exists(path)
     assert os.path.isdir(path)
 
 def check_exist_isfile(path) -> None:
-    """tests.helpers.check_exist_isfile function"""
+    """Function:check_exist_isfile"""
     assert os.path.exists(path)
     assert os.path.isfile(path)
 
 def validate_url_sets(valid_url :str) -> None:
-    """tests.helpers.validate_url_sets function"""
+    """Function:validate_url_sets"""
     assert global_vars.STR_INPUTS_URL == valid_url + "/system/inputs"
     assert global_vars.STR_INDEXSETS_URL == valid_url + "/system/indices/index_sets"
     assert global_vars.STR_NODE_ID_URL == valid_url + "/system/cluster/node"
@@ -32,7 +31,7 @@ def validate_url_sets(valid_url :str) -> None:
     assert global_vars.STR_CLUSTER_URL == valid_url + "/cluster"
 
 def validate_path_sets(valid_cwd :str) -> None:
-    """tests.helpers.validate_path_sets function"""
+    """Function:validate_path_sets"""
     assert global_vars.STR_PTH_HOST_CFG_DIR == valid_cwd + "/host-configs"
     check_exist_isdir(global_vars.STR_PTH_HOST_CFG_DIR)
     assert global_vars.STR_PTH_HOST_CFG_TEMPLATE == valid_cwd + "/host-config-templates"
@@ -47,38 +46,37 @@ def validate_path_sets(valid_cwd :str) -> None:
     check_exist_isdir(global_vars.STR_PTH_STREAMS_CFG)
     assert global_vars.STR_PTH_SCHEMAS == valid_cwd + "/schemas"
     check_exist_isdir(global_vars.STR_PTH_SCHEMAS)
-    assert global_vars.STR_PTH_HOST_SCHEMA == valid_cwd + "/schemas" + "/schema_host.json"
+    assert global_vars.STR_PTH_HOST_SCHEMA == valid_cwd + "/schemas" + "/host.json"
     check_exist_isfile(global_vars.STR_PTH_HOST_SCHEMA)
-    assert global_vars.STR_PTH_SCHEMA_INDEX == valid_cwd + "/schemas" + "/schema_index.json"
+    assert global_vars.STR_PTH_SCHEMA_INDEX == valid_cwd + "/schemas" + "/index.json"
     check_exist_isfile(global_vars.STR_PTH_SCHEMA_INDEX)
-    assert global_vars.STR_PTH_SCHEMA_INPUT == valid_cwd + "/schemas" + "/schema_input.json"
+    assert global_vars.STR_PTH_SCHEMA_INPUT == valid_cwd + "/schemas" + "/input.json"
     check_exist_isfile(global_vars.STR_PTH_SCHEMA_INPUT)
-    assert global_vars.STR_PTH_SCHEMA_EXTRACTOR == valid_cwd + "/schemas" + "/schema_extractor.json"
+    assert global_vars.STR_PTH_SCHEMA_EXTRACTOR == valid_cwd + "/schemas" + "/extractor.json"
     check_exist_isfile(global_vars.STR_PTH_SCHEMA_EXTRACTOR)
-    assert global_vars.STR_PTH_SCHEMA_STREAM == valid_cwd + "/schemas" + "/schema_stream.json"
+    assert global_vars.STR_PTH_SCHEMA_STREAM == valid_cwd + "/schemas" + "/stream.json"
     check_exist_isfile(global_vars.STR_PTH_SCHEMA_STREAM)
 
 def test_set_global_vars_output_3_args(capsys) -> None:
-    """htests.helpers.test_set_global_vars_output_3_args function"""
-    args = [VALID_SCRIPT_SETUP, VALID_TOKEN, VALID_URL, VALID_CWD]
+    """Function:test_set_global_vars_output_3_args"""
+    args = [MOCK_SCRIPT, MOCK_TOKEN, MOCK_TEST_URL, VALID_CWD]
     set_global_vars(args)
     captured = capsys.readouterr()
     expected_output = (
         "Assigning global variables.\n"
         "[Done] Assigning global variables.\n\n"
     )
+    validate_url_sets(MOCK_TEST_URL)
+    validate_path_sets(VALID_CWD)
     assert captured.out == expected_output
     assert global_vars.BOOL_VERBOSE is True
-
     assert global_vars.LIST_BUILTIN_INDEX_NAMES == ["Default index set","Graylog Events","Graylog System Events"]
     assert global_vars.LIST_BUILTIN_STREAMS_IDS == ["000000000000000000000001","000000000000000000000002", \
                                                     "000000000000000000000003"]
-    validate_url_sets(VALID_URL)
-    validate_path_sets(VALID_CWD)
 
 def test_set_global_vars_output_4_args(capsys) -> None:
-    """tests.helpers.test_set_global_vars_output_4_args function"""
-    args = [VALID_SCRIPT_SETUP, VALID_TOKEN, VALID_URL, VERBOSE, VALID_CWD]
+    """Function:test_set_global_vars_output_4_args"""
+    args = [MOCK_SCRIPT, MOCK_TOKEN, MOCK_TEST_URL, BOOL_VERBOSE_FALSE, VALID_CWD]
     set_global_vars(args)
     captured = capsys.readouterr()
     expected_output = (
@@ -87,11 +85,11 @@ def test_set_global_vars_output_4_args(capsys) -> None:
     )
     assert captured.out == expected_output
     assert global_vars.BOOL_VERBOSE is False
-    validate_url_sets(VALID_URL)
+    validate_url_sets(MOCK_TEST_URL)
     validate_path_sets(VALID_CWD)
 
 def test_set_global_vars_verify_output_1_arg(capsys) -> None:
-    """tests.helpers.test_set_global_vars_verify_output_1_arg function"""
+    """Function:test_set_global_vars_verify_output_1_arg"""
     args = [VALID_SCRIPT_VERIFY,VALID_CWD]
     set_global_vars_verify(args)
     captured = capsys.readouterr()
@@ -104,8 +102,8 @@ def test_set_global_vars_verify_output_1_arg(capsys) -> None:
     validate_path_sets(VALID_CWD)
 
 def test_set_global_vars_verify_output_2_args(capsys) -> None:
-    """tests.helpers.test_set_global_vars_verify_output_2_args function"""
-    args = [VALID_SCRIPT_VERIFY, VERBOSE, VALID_CWD]
+    """Function:test_set_global_vars_verify_output_2_args"""
+    args = [VALID_SCRIPT_VERIFY, BOOL_VERBOSE_FALSE, VALID_CWD]
     set_global_vars_verify(args)
     captured = capsys.readouterr()
     expected_output = (

@@ -1,26 +1,28 @@
-"""tests.setup test_gen_list_host_config_files module"""
+"""Module:tests.setup.test_gen_list_host_config_files"""
+import os
 import pytest
 
 from src.setup import gen_list_host_config_files
-from tests.common.test_common import create_sample_host_config_dir
+from tests.common.test_common import BOOL_VERBOSE_TRUE
 from tests.common.test_common import shared_asserts
 
-MOCK_BOOL_VERBOSE=True
 
-def test_gen_list_host_config_files_success(tmp_path,capsys) -> None:
-    """tests.setup.test_gen_list_host_config_files_success function"""
-    hostconfig=create_sample_host_config_dir(tmp_path,"config-1")
-    hostconfigfile_path = tmp_path.as_posix()+"/config-1/config_0.json"
-    return_value = gen_list_host_config_files(MOCK_BOOL_VERBOSE,hostconfig)
+CWD = os.getcwd()
+HOSTCONFIGDIR = CWD + "/tests/test-configs/host-config"
+HOSTCONFIGFILE= CWD + "/tests/test-configs/host-config/samplehost.json"
+
+def test_gen_list_host_config_files_success(capsys) -> None:
+    """Function:test_gen_list_host_config_files_success"""
+    return_value = gen_list_host_config_files(BOOL_VERBOSE_TRUE,HOSTCONFIGDIR)
     captured = capsys.readouterr()
-    expected_output = f"  Adding host config to list:{hostconfigfile_path}\n"
+    expected_output = f"  Adding host config to list:{HOSTCONFIGFILE}\n"
     assert captured.out == expected_output
-    assert return_value == [hostconfigfile_path]
+    assert return_value == [HOSTCONFIGFILE]
 
 def test_gen_list_host_config_files_fail_oserrror(capsys) -> None:
-    """tests.setup.test_gen_list_host_config_files_fail_oserrror function"""
+    """Function:test_gen_list_host_config_files_fail_oserrror"""
     with pytest.raises(SystemExit) as e:
-        gen_list_host_config_files(MOCK_BOOL_VERBOSE,"bad_path")
+        gen_list_host_config_files(BOOL_VERBOSE_TRUE,"bad_path")
     captured = capsys.readouterr()
     message = "[ERROR] An OSError occurred in gen_list_host_config_files:"
     expected_output = f"{message} [Errno 2] No such file or directory: 'bad_path'\n"

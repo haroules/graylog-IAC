@@ -1,21 +1,21 @@
-"""tests.backup test_listexisting module"""
+"""Module:tests.backup.test_listexisting"""
 import os
 import pytest
 
 from src.backup import list_existing_backups
-from tests.common.test_common import create_sample_config_dir
+from tests.common.test_common import create_config_dir
 from tests.common.test_common import shared_asserts
 
-def test_list_existing_backups_pass_mocked_filesystem(tmp_path) -> None:
-    """tests.backup.test_list_existing_backups_pass_mocked_filesystem function"""
-    create_sample_config_dir(tmp_path, "backup-A")
-    create_sample_config_dir(tmp_path, "backup-B")
-    create_sample_config_dir(tmp_path, "backup-C")
+def test_list_existing_backups_pass(tmp_path) -> None:
+    """Function:test_list_existing_backups_pass"""
+    create_config_dir(tmp_path, "backup-A")
+    create_config_dir(tmp_path, "backup-B")
+    create_config_dir(tmp_path, "backup-C")
     result = list_existing_backups(tmp_path)
     assert result == 3
 
 def test_list_existing_backups_fail_filenotfound(capsys) -> None:
-    """tests.backup.test_list_existing_backups_fail_filenotfound function"""
+    """Function:test_list_existing_backups_fail_filenotfound"""
     message = "FileNotFoundError in list_existing_backups [Errno 2] No such file or directory"
     mock_bad_path = "bad-path"
     with pytest.raises(SystemExit) as e:
@@ -25,8 +25,8 @@ def test_list_existing_backups_fail_filenotfound(capsys) -> None:
     expected_output = f"[ERROR] {message}: '{mock_bad_path}'\n"
     shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
-def test_list_existing_backups_fail_raised_oserror(capsys) -> None:
-    """tests.backup.test_list_existing_backups_fail_raised_oserror function"""
+def test_list_existing_backups_fail_oserror(capsys) -> None:
+    """Function:test_list_existing_backups_fail_oserror"""
     mock_bad_dir = True
     with pytest.raises(SystemExit) as e:
         with pytest.raises(os.error):

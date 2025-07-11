@@ -1,4 +1,4 @@
-"""src.helpers module"""
+"""Module:src.helpers"""
 import sys
 import base64
 import os
@@ -11,13 +11,13 @@ from jqpy import jq
 import global_vars
 
 def exit_with_message(message: str, error_code: int) -> None:
-    """src.helpers.exit_with_message function"""
+    """Function:exit_with_message"""
     # pass message exit with integer code to cut down on print followed by sys.exit
     print(message)
     sys.exit(error_code)
 
 def is_json_valid(file_path: str) -> bool:
-    """src.helpers.is_json_valid function"""
+    """Function:is_json_valid"""
     # check if file exist and can load as json or throws error (return True/False)
     try:
         if os.path.isfile(file_path):
@@ -31,7 +31,7 @@ def is_json_valid(file_path: str) -> bool:
     return False
 
 def contains_sublist(sub_list: list, main_list: list) -> bool:
-    """src.helpers.contains_sublist function"""
+    """Function:contains_sublist"""
     # simple check if second list contains first list as an item itself
     # return true if it does, false if not
     if not isinstance(sub_list,list) or not isinstance(main_list,list):
@@ -47,7 +47,7 @@ def contains_sublist(sub_list: list, main_list: list) -> bool:
     return False
 
 def remove_sublists(main_list :list, sublist_to_remove :list) -> list:
-    """src.helpers.remove_sublists function"""
+    """Function:remove_sublists"""
     int_main_list_count = len(main_list)
     int_sublist_count = len(sublist_to_remove)
     if not int_main_list_count > int_sublist_count:
@@ -64,7 +64,7 @@ def remove_sublists(main_list :list, sublist_to_remove :list) -> list:
         return main_list
 
 def check_graylog_baseurl(args: list) -> Union[str, bool]:
-    """src.helpers.check_graylog_baseurl function"""
+    """Function:check_graylog_baseurl"""
     print("Verify graylog baseurl.")
 
     match = url(args[2])  # check url has valid form
@@ -85,7 +85,7 @@ def check_graylog_baseurl(args: list) -> Union[str, bool]:
     return True
 
 def check_api_token(args: list) -> Union[str, bool]:
-    """src.helpers.check_api_token function"""
+    """Function:check_api_token"""
     # perform quick check that token is valid by getting cluster status
     # immediately exit if not status 200, otherwise print status of cluster
     print("Verify api token authenticates and cluster is up.")
@@ -104,7 +104,7 @@ def check_api_token(args: list) -> Union[str, bool]:
         return f"There was a problem decoding json: {e}"
 
 def set_global_vars(args: list) -> None:
-    """src.helpers.set_global_vars function"""
+    """Function:set_global_vars"""
     # see global_vars for description of each var
     print("Assigning global variables.")
     str_pth_cwd = ""
@@ -135,11 +135,11 @@ def set_global_vars(args: list) -> None:
     global_vars.STR_PTH_STREAMS_CFG = str_pth_cwd + "/streams"
     global_vars.STR_PTH_SCHEMAS = str_pth_cwd + "/schemas"
     # set static values for filenames
-    global_vars.STR_PTH_HOST_SCHEMA = global_vars.STR_PTH_SCHEMAS + "/schema_host.json"
-    global_vars.STR_PTH_SCHEMA_INDEX = global_vars.STR_PTH_SCHEMAS + "/schema_index.json"
-    global_vars.STR_PTH_SCHEMA_INPUT = global_vars.STR_PTH_SCHEMAS + "/schema_input.json"
-    global_vars.STR_PTH_SCHEMA_EXTRACTOR = global_vars.STR_PTH_SCHEMAS + "/schema_extractor.json"
-    global_vars.STR_PTH_SCHEMA_STREAM = global_vars.STR_PTH_SCHEMAS + "/schema_stream.json"
+    global_vars.STR_PTH_HOST_SCHEMA = global_vars.STR_PTH_SCHEMAS + "/host.json"
+    global_vars.STR_PTH_SCHEMA_INDEX = global_vars.STR_PTH_SCHEMAS + "/index.json"
+    global_vars.STR_PTH_SCHEMA_INPUT = global_vars.STR_PTH_SCHEMAS + "/input.json"
+    global_vars.STR_PTH_SCHEMA_EXTRACTOR = global_vars.STR_PTH_SCHEMAS + "/extractor.json"
+    global_vars.STR_PTH_SCHEMA_STREAM = global_vars.STR_PTH_SCHEMAS + "/stream.json"
     # list of paths to all important data directories used in:
     global_vars.LIST_CONFIG_DIRECTORIES = [
         global_vars.STR_PTH_HOST_CFG_DIR, global_vars.STR_PTH_HOST_CFG_TEMPLATE,
@@ -162,7 +162,7 @@ def set_global_vars(args: list) -> None:
     print("[Done] Assigning global variables.\n")
 
 def set_global_vars_verify(args: list) -> None:
-    """src.helpers.set_global_vars_verify function"""
+    """Function:set_global_vars_verify"""
     print("Assigning global variables.")
     str_path_cwd = ""
     # based on positional arguments we have to set cur working directory and verbose flag appropriately
@@ -181,11 +181,11 @@ def set_global_vars_verify(args: list) -> None:
     global_vars.STR_PTH_STREAMS_CFG = str_path_cwd + "/streams"
     global_vars.STR_PTH_SCHEMAS = str_path_cwd + "/schemas"
     # set static values for filenames
-    global_vars.STR_PTH_HOST_SCHEMA = global_vars.STR_PTH_SCHEMAS + "/schema_host.json"
-    global_vars.STR_PTH_SCHEMA_INDEX = global_vars.STR_PTH_SCHEMAS + "/schema_index.json"
-    global_vars.STR_PTH_SCHEMA_INPUT = global_vars.STR_PTH_SCHEMAS + "/schema_input.json"
-    global_vars.STR_PTH_SCHEMA_EXTRACTOR = global_vars.STR_PTH_SCHEMAS + "/schema_extractor.json"
-    global_vars.STR_PTH_SCHEMA_STREAM = global_vars.STR_PTH_SCHEMAS + "/schema_stream.json"
+    global_vars.STR_PTH_HOST_SCHEMA = global_vars.STR_PTH_SCHEMAS + "/host.json"
+    global_vars.STR_PTH_SCHEMA_INDEX = global_vars.STR_PTH_SCHEMAS + "/index.json"
+    global_vars.STR_PTH_SCHEMA_INPUT = global_vars.STR_PTH_SCHEMAS + "/input.json"
+    global_vars.STR_PTH_SCHEMA_EXTRACTOR = global_vars.STR_PTH_SCHEMAS + "/extractor.json"
+    global_vars.STR_PTH_SCHEMA_STREAM = global_vars.STR_PTH_SCHEMAS + "/stream.json"
     # list of paths to all important data directories used in:
     # graylog_verify::verify_configfiles_filesystem
     # graylog_helpers::make_config_backup
@@ -198,7 +198,7 @@ def set_global_vars_verify(args: list) -> None:
     print("[Done] Assigning global variables.\n")
 
 def check_args(args :list) -> Union[str, list[str,str,str,str], list[str,str,str,bool,str]]:
-    """src.helpers.check_args function"""
+    """Function:check_args"""
    # validate inputs to this script
     # input to function is the arguments passed to the script at runtime
     # return args with current working directory appended or
@@ -233,7 +233,7 @@ def check_args(args :list) -> Union[str, list[str,str,str,str], list[str,str,str
     return args
 
 def check_args_verify(args :list) -> Union[str, list[str,str], list[str,bool,str]]:
-    """src.helpers.check_args_verify function"""
+    """Function:check_args_verify"""
    # validate inputs to this script
     # input to function is the arguments passed to the script at runtime
     # return args with current working directory appended or
@@ -264,7 +264,7 @@ def check_args_verify(args :list) -> Union[str, list[str,str], list[str,bool,str
     return args
 
 def do_init(args) -> list:
-    """src.helpers.do_init function"""
+    """Function:do_init"""
     validargs = check_args(args)
     if isinstance(validargs,str):
         print(validargs)
@@ -282,7 +282,7 @@ def do_init(args) -> list:
     return validargs
 
 def usage(valid_args) -> None:
-    """src.helpers.usage function"""
+    """Function:usage"""
     common_message = (
         "  -Admin token and url are required, verbose defaults to True if not set (to False).\n"
         "  -Token should be 52 alpha-numeric characters.\n"

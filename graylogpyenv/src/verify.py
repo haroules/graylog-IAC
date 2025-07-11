@@ -1,4 +1,4 @@
-"""src.verify module"""
+"""Module:src.verify"""
 import os
 import json
 from pathlib import Path
@@ -13,10 +13,9 @@ def get_config_counts(bool_verbose :bool, list_config_directories :list,
     str_pth_host_cfg_dir :str, str_pth_host_cfg_template :str, str_pth_extrctr_cfg :str,
     str_pth_indices_cfg :str, str_pth_inputs_cfg :str, str_pth_streams_cfg :str,
     str_pth_schemas :str) -> int:
-    """src.verify.get_config_counts function"""
-    int_cfg_dir_count = len(list_config_directories) # get count of data dirs
+    """Function:get_config_counts"""
+    int_cfg_dir_count = len(list_config_directories)
     try:
-        # get count of files per dir
         int_host_cfg_file_count = len(os.listdir(str_pth_host_cfg_dir))
         int_host_cfg_template_count = len(os.listdir(str_pth_host_cfg_template))
         int_xtrctr_cfg_file_count = len(os.listdir(str_pth_extrctr_cfg))
@@ -24,11 +23,9 @@ def get_config_counts(bool_verbose :bool, list_config_directories :list,
         int_inpt_cfg_file_count = len(os.listdir(str_pth_inputs_cfg))
         int_strm_cfg_file_count = len(os.listdir(str_pth_streams_cfg))
         int_schema_file_count = len(os.listdir(str_pth_schemas))
-        # sum counts for total
         int_total_file_count = ( int_host_cfg_file_count + int_host_cfg_template_count +
             int_xtrctr_cfg_file_count + int_indx_cfg_file_count + int_inpt_cfg_file_count +
             int_strm_cfg_file_count + int_schema_file_count )
-        # print table so user can sanity check
         if bool_verbose:
             print(f"{int_cfg_dir_count} Data Dirs")
             print(f"{int_schema_file_count} Schema files")
@@ -43,15 +40,10 @@ def get_config_counts(bool_verbose :bool, list_config_directories :list,
     return int_total_file_count
 
 def verify_dirs_files_json(bool_verbose :bool, list_config_directories :list) -> int:
-    # check config directory paths exists and is a directory in list items
-    # build path to config file in directory
-    # check built path to file is actually a file,
-    # check has .json extension, and passed json decode test
-    # exit if we fail a test (json is easy to mess up, lets fail early and fast)
-    """src.verify.verify_dirs_files_json function"""
-    str_config_dir = "" # loop var contains current dir being checked
-    str_config_file = "" # loop var contains current config file being checked
-    str_config_file_path = "" # built path to a config file
+    """Function:verify_dirs_files_json"""
+    str_config_dir = ""
+    str_config_file = ""
+    str_config_file_path = ""
     int_config_file_count = 0
     for str_config_dir in list_config_directories:
         if bool_verbose:
@@ -74,11 +66,7 @@ def verify_dirs_files_json(bool_verbose :bool, list_config_directories :list) ->
     return int_config_file_count
 
 def verify_configfiles_filesystem(global_vars_list :list) -> None:
-    """src.verify.verify_configfiles_filesystem function"""
-    # keep count of total config files, directories
-    # check schemas aren't writable, if they are this will
-    # let you know something has potentially changed and needs validation
-    # changing schema should require extra step to make file writable
+    """Function:verify_configfiles_filesystem"""
     bool_verbose = global_vars_list[0]
     list_config_directories = global_vars_list[1]
     str_pth_host_cfg_dir = global_vars_list[2]
@@ -106,19 +94,15 @@ def verify_configfiles_filesystem(global_vars_list :list) -> None:
 
 def verify_hostconfigfiles_schema(bool_verbose :bool, str_pth_host_cfg_dir :str,
         str_pth_host_schema :str) -> None:
-    """src.verify.verify_hostconfigfiles_schema function"""
-    # check that any object creation config files referenced in host config file exist
-    # verify filesystem objects before we access them
-    # verify host config file adheres to defined host schema using jsonschema module
-    # verify config sets defined matches static count declared
-    str_config_filename = "" # loop var containing list of files found in dir
-    str_config_hostname = "" # hostname read from config file
-    str_host_config_file = "" # built full path to config file found in directory
-    dict_host_config = {} # json dict of data from config file
-    dict_host_config_schema = {} # json dict of data from schema file
-    int_count_hostcfg_files = 0 # count of host config files found in directory
-    int_config_set_count = 0 # count of config sets found in config file
-    int_actual_cs_count = 0 # count of length of array items returned by filter
+    """Function:verify_hostconfigfiles_schema"""
+    str_config_filename = ""
+    str_config_hostname = ""
+    str_host_config_file = ""
+    dict_host_config = {}
+    dict_host_config_schema = {}
+    int_count_hostcfg_files = 0
+    int_config_set_count = 0
+    int_actual_cs_count = 0
 
     print("Verifying schema of host configuration files.")
     try:
@@ -156,19 +140,12 @@ def verify_hostconfigfiles_schema(bool_verbose :bool, str_pth_host_cfg_dir :str,
 
 def verify_hostconfig_subschema(bool_verbose: bool, file_loc: dict | str, str_pth_schema: str,
         str_pth_cfg: str) -> None:
-    """src.verify.verify_hostconfig_subschema function"""
-    # argument 1 is an object filename in a config file
-    # argument 2 is a path to the schema that correlates to the object config file
-    # argument 3 is the path to the object filename
-    # confirm that the built path of file exists and is a file
-    # load the content of the object's config file
-    # load the content of the corresponding schema
-    # validate the content passes schema check
-    str_filename = ""  # contains full path to object config file built from function inputs
-    configfile = "" # file object that contains config object data
-    schemafile = "" # file object that contains object schema
-    dict_input_config = {} # json of config object
-    dict_input_schema = {} # json of schema
+    """Function:verify_hostconfig_subschema"""
+    str_filename = ""
+    configfile = ""
+    schemafile = ""
+    dict_input_config = {}
+    dict_input_schema = {}
 
     if bool_verbose:
         print(f"    Verifying object(s): {file_loc}")
@@ -196,14 +173,7 @@ def verify_hostconfigfiles_deps_schema(bool_verbose :bool, str_pth_host_cfg_dir 
         str_pth_schema_index :str, str_pth_indices_cfg :str, str_pth_schema_input :str,
         str_pth_inputs_cfg :str, str_pth_schema_stream, str_pth_streams_cfg :str,
         str_pth_schema_extractor :str, str_pth_extrctr_cfg :str) -> None:
-    """src.verify.verify_hostconfigfiles_deps_schema function"""
-    # argument 1 path to host configuration file folder
-    # get list of host config files in folder
-    # verify that built path is actually a file
-    # open config file and store json content
-    # use jq to parse out object config files in each host config set
-    # verify each object config file against relevant object schema file
-    # exit if an object file doesn't pass schema validation
+    """Function:verify_hostconfigfiles_deps_schema"""
     str_config_filename = ""
     dict_host_config = {}
     dict_index_file_loc = {}
@@ -233,16 +203,16 @@ def verify_hostconfigfiles_deps_schema(bool_verbose :bool, str_pth_host_cfg_dir 
                 verify_hostconfig_subschema(bool_verbose, dict_extrctr_file_loc, str_pth_schema_extractor, str_pth_extrctr_cfg)
             else:
                 if bool_verbose:
-                    print(f"    No extractors defined in{str_config_file_path}")
+                    print(f"    No extractors defined in {str_config_file_path}")
         print("[Done] Analyzing host configuration file object's schema.\n")
     except os.error as e:
         exit_with_message(f"[ERROR] An OSError occurred in verify_hostconfigfiles_deps_schema: {e}",1)
     except json.JSONDecodeError as e:
         exit_with_message(f"[ERROR] Problem decoding json in verify_hostconfigfiles_deps_schema: {e}",1)
 
-def check_hostconfig_indexes_unique(bool_verbose :bool,int_config_set_count :int, dict_host_config :dict
-        , str_config_file_path :str) -> None:
-    """src.verify.check_hostconfig_indexes_unique function"""
+def check_hostconfig_indexes_unique(bool_verbose :bool,int_config_set_count :int, dict_host_config :dict,
+    str_config_file_path :str) -> None:
+    """Function:check_hostconfig_indexes_unique"""
     # get list of all index config files, remove dupes.
     # If new list count is less than declared count in the config file, that means a dupe was removed.
     list_config_set_index_files = jq('.config_sets[].index_config_file',dict_host_config)
@@ -253,20 +223,20 @@ def check_hostconfig_indexes_unique(bool_verbose :bool,int_config_set_count :int
         if bool_verbose:
             print(f"    {int_count_indx_config_file} Unique indexes defined in: {str_config_file_path}")
 
-def check_hostconfig_streams_unique(bool_verbose :bool, int_config_set_count :int, dict_host_config :dict
-        ,str_config_file_path :str) -> None:
-    """src.verify.check_hostconfig_streams_unique function"""
+def check_hostconfig_streams_unique(bool_verbose :bool, int_config_set_count :int, dict_host_config :dict,
+    str_config_file_path :str) -> None:
+    """Function:check_hostconfig_streams_unique"""
     # check stream config file is unique for each config set
     list_config_set_stream_files = jq('.config_sets[].stream_config_file',dict_host_config)
     int_count_strm_config_file = len(list(set(list_config_set_stream_files)))
     if int_count_strm_config_file != int_config_set_count:
-        exit_with_message(f"[ERROR] Duplicate streams in host config file {str_config_file_path}",1)
+        exit_with_message(f"[ERROR] Duplicate streams in host config file: {str_config_file_path}",1)
     else:
         if bool_verbose:
-            print(f"    {int_count_strm_config_file} Unique streams defined in:{str_config_file_path}")
+            print(f"    {int_count_strm_config_file} Unique streams defined in: {str_config_file_path}")
 
 def check_hostconfig_xtrctrs_unique(bool_verbose :bool, dict_host_config :dict, str_config_file_path :str) -> None:
-    """src.verify.check_hostconfig_xtrctrs_unique function"""
+    """Function:check_hostconfig_xtrctrs_unique"""
     # Verify count of extractors in host config matches number statically defined
     # first add up all statically defined counts in each host file
     list_counts_xtrctr_config_file = jq('.config_sets[].extractors_total',dict_host_config)
@@ -285,16 +255,11 @@ def check_hostconfig_xtrctrs_unique(bool_verbose :bool, dict_host_config :dict, 
             print(f"    {int_sum_of_extractors_count} Unique extractors defined in: {str_config_file_path}")
 
 def verify_hostconfig_integrity(bool_verbose :bool, str_pth_host_cfg_dir :str) -> None:
-    """src.verify.verify_hostconfig_integrity function"""
-    # build path to each config file in the directory
-    # check index object files are unique (should be one index for every stream)
-    # check stream object files are unique (should be one stream for every index)
-    # check static declared count of extractors matches number of extractors defined
-    # exit if any of the tests fail
-    int_config_set_count = 0                    # value config_sets_total statically defined in config file
-    str_config_filename = ""                    # loop variable containing filename found in directory
-    str_config_file_path = ""                   # built path to file
-    dict_host_config = {}                       # json content of config file
+    """Function:verify_hostconfig_integrity"""
+    int_config_set_count = 0
+    str_config_filename = ""
+    str_config_file_path = ""
+    dict_host_config = {}
 
     print(f"Checking host configurations data integrity in directory: {str_pth_host_cfg_dir}")
     try:
@@ -315,7 +280,7 @@ def verify_hostconfig_integrity(bool_verbose :bool, str_pth_host_cfg_dir :str) -
         exit_with_message(f"[ERROR] Problem decoding json in verify_hostconfig_integrity: {e}",1)
 
 def get_hostname_from_config(bool_verbose :bool, str_config_filename :str, dict_host_config :dict) -> str:
-    """src.verify.get_hostname_from_config function"""
+    """Function:get_hostname_from_config"""
     list_config_hostname = jq('.hostname',dict_host_config,raw_output=True)
     # host.domain.com is expectation
     str_parsed_host = list_config_hostname.text.split(".",maxsplit=1)
@@ -325,7 +290,7 @@ def get_hostname_from_config(bool_verbose :bool, str_config_filename :str, dict_
     return str_clean_hostname
 
 def check_index_title(bool_verbose :bool, str_hostname :str, dict_host_config :dict) -> None:
-    """src.verify.check_index_title function"""
+    """Function:check_index_title"""
     # check object filenames and title have hostname somewhere in the string
     list_index_file_loc=jq('.config_sets[] | .index_config_file, .index_title',dict_host_config)
     if bool_verbose:
@@ -335,7 +300,7 @@ def check_index_title(bool_verbose :bool, str_hostname :str, dict_host_config :d
             exit_with_message(f"[ERROR] {str_hostname} not found in object title {title}",1)
 
 def check_input_title(bool_verbose :bool, str_hostname :str, dict_host_config :dict) -> None:
-    """src.verify.check_input_title function"""
+    """Function:check_input_title"""
     # for a host multiple config sets could use the same input remove dupes
     list_input_file_loc=list(dict.fromkeys(jq('.config_sets[] | .input_config_file, .input_title',dict_host_config)))
     if bool_verbose:
@@ -345,21 +310,25 @@ def check_input_title(bool_verbose :bool, str_hostname :str, dict_host_config :d
             exit_with_message(f"[ERROR] {str_hostname} not found in object file name or object title {title}",1)
 
 def check_stream_title(bool_verbose :bool, str_hostname :str, dict_host_config :dict) -> None:
-    """src.verify.check_stream_title function"""
+    """Function:check_stream_title"""
     list_stream_file_loc=jq('.config_sets[] | .stream_config_file, .stream_title',dict_host_config)
     if bool_verbose:
         print("    Checking stream title")
     for title in list_stream_file_loc:
         if not str_hostname in title:
-            exit_with_message(f"[ERROR] {str_hostname} not found in object file name or object title {title}",1)
+            exit_with_message(f"[ERROR] {str_hostname} not found in object filename or title {title}",1)
 
 def check_xtrctr_title(bool_verbose :bool, str_config_filename :str, str_hostname :str, dict_host_config :dict) -> None:
-    """src.verify.check_xtrctr_title function"""
+    """Function:check_xtrctr_title"""
+    int_total_count = 0
     # not all hosts inputs have extractors check if result is empty before runnng check
+    list_count_extrctr=jq('.config_sets[] | .extractors_total',dict_host_config)
     list_extrctr_file_loc=jq('.config_sets[] | .extractors[] | .extractor_config_file',dict_host_config)
     # it's possible to have no extractor defined if not don't try
-    if list_extrctr_file_loc == 0 and bool_verbose:
-        print(f"    No extractors defined for host: {str_config_filename}")
+    for count in list_count_extrctr:
+        int_total_count += count
+    if int_total_count == 0 and bool_verbose:
+        print(f"    Config set has no extractors defined: {str_config_filename}")
     else:
         if bool_verbose:
             print("    Checking extractor title(s)")
@@ -368,16 +337,10 @@ def check_xtrctr_title(bool_verbose :bool, str_config_filename :str, str_hostnam
                 exit_with_message(f"[ERROR] {str_hostname} not found in extractor file name {title}",1)
 
 def verify_hostname_in_config(bool_verbose :bool, str_pth_host_cfg_dir :str, ) -> None:
-    """src.verify.verify_hostname_in_config function"""
-    # Check for title in host config matches named object files
-    # In the case of extractors, the hostname is in the extractor filename not the definition itself
-    # Get list of host config files in dir
-    # Loop through list of host configs and store each object's file list in a dictionary
-    # Parse out hostname from config
-    # Loop through each dictionary of items and see if hostname is somewhere in the string
-    str_config_filename = ""  # loop var containing just filename of host config
-    str_config_file_path = "" # build full fs path to config file
-    dict_host_config = {} # contains full config file loaded as json
+    """Function:verify_hostname_in_config"""
+    str_config_filename = ""
+    str_config_file_path = ""
+    dict_host_config = {}
 
     print("Checking hostname is present in object filenames and titles")
     try:
@@ -397,26 +360,16 @@ def verify_hostname_in_config(bool_verbose :bool, str_pth_host_cfg_dir :str, ) -
         exit_with_message(f"[ERROR] Problem decoding json in verify_hostname_in_config: {e}",1)
 
 def verify_stream_rules(bool_verbose :bool, str_pth_host_cfg_dir :str, str_pth_streams_cfg :str) -> None:
-    """src.verify.verify_stream_rules function"""
-    # Check stream rules have correct static field input name in the rule
-    # Get list of host config files in the directory
-    # Build full path to host config file in the directory
-    # Load host config file to a dictionary
-    # jq query out the config sets store into a list
-    # iterate on each config set in the list
-    # get the input title, stream config filename
-    # load stream config to a dictionary
-    # jq query out rules field named input
-    # compare against expected title
-    str_config_filename = ""          # loop variable of filename found in config directory
-    str_host_config_file = ""         # full path to config file found in config directory
-    str_input_title = ""              # input title parsed from config set
-    str_stream_config_filename = ""   # stream config filename parsed from config set
-    str_path_stream_configfile = ""   # full path to stream config file
-    str_input_rule = ""               # input rule from jq query stripped down to a string
-    dict_host_config = {}             # json dict of loaded host config file
-    dict_stream_config = {}           # json dict of loaded stream config file
-    list_config_sets = []             # list of config sets from jq query of host config file dictionary
+    """Function:verify_stream_rules"""
+    str_config_filename = ""
+    str_host_config_file = ""
+    str_input_title = ""
+    str_stream_config_filename = ""
+    str_path_stream_configfile = ""
+    str_input_rule = ""
+    dict_host_config = {}
+    dict_stream_config = {}
+    list_config_sets = []
 
     print("Checking stream rules have valid input static fields")
     try:

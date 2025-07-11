@@ -1,4 +1,4 @@
-"""src.clean module"""
+"""Module:src.clean"""
 import json
 from typing import Tuple
 import requests
@@ -8,13 +8,13 @@ from src.helpers import remove_sublists
 from src.helpers import exit_with_message
 
 def get_clean_list_ids_to_delete(list_all_ids :list, list_builtin_ids: list) -> list:
-    """src.clean.get_clean_list_ids_to_delete function"""
+    """Function:get_clean_list_ids_to_delete"""
     list_clean_ids = [] # ids list without built ins
     list_clean_ids = remove_sublists(list_all_ids,list_builtin_ids)
     return list_clean_ids
 
 def get_list_all_stream_ids(str_streams_url :str, dict_get_headers: dict) -> list:
-    """src.clean.get_list_all_stream_ids function"""
+    """Function:get_list_all_stream_ids"""
     list_all_streams_ids = []
     try:
         response_streams = requests.get(str_streams_url, headers=dict_get_headers, timeout=3)
@@ -28,7 +28,7 @@ def get_list_all_stream_ids(str_streams_url :str, dict_get_headers: dict) -> lis
     return list_all_streams_ids
 
 def get_list_stream_names_to_delete(list_stream_ids_to_delete :list, str_streams_url :str, dict_get_headers :dict) -> list:
-    """src.clean.get_list_stream_names_to_delete function"""
+    """Function:get_list_stream_names_to_delete"""
     list_clean_names = [] # names list without built ins
     for stream_id in list_stream_ids_to_delete:
         try:
@@ -49,7 +49,7 @@ def get_list_stream_names_to_delete(list_stream_ids_to_delete :list, str_streams
 
 def remove_streams(bool_verbose :bool, str_streams_url :str, dict_get_headers :dict, dict_post_headers :dict,
         list_builtin_streams_ids :list) -> bool:
-    """src.clean.remove_streams function"""
+    """Function:remove_streams"""
     response_delete_stream = ""  # python response object from delete stream api endpoint
     str_deleteurl = "" # delete streams api endpoint
     list_stream_names_to_delete = [] # list of all stream names from streams api endpoint
@@ -86,7 +86,7 @@ def remove_streams(bool_verbose :bool, str_streams_url :str, dict_get_headers :d
     return True
 
 def gen_list_inputs_to_delete(str_inputs_url: str, dict_get_headers: dict) -> Tuple[list, list]:
-    """src.clean.gen_list_inputs_to_delete function"""
+    """Function:gen_list_inputs_to_delete"""
     list_input_ids = []
     list_input_names = []
     try:
@@ -102,7 +102,7 @@ def gen_list_inputs_to_delete(str_inputs_url: str, dict_get_headers: dict) -> Tu
     return list_input_ids, list_input_names
 
 def remove_inputs(bool_verbose :bool, str_inputs_url :str, dict_get_headers :dict, dict_post_headers :dict) -> bool:
-    """src.clean.remove_inputs function"""
+    """Function:remove_inputs"""
     str_delete_input_byid_url = "" # delete inputs api endpoint
     list_input_ids_to_delete = [] # all input ids
     list_input_names_to_delete = [] # all input names
@@ -134,7 +134,7 @@ def remove_inputs(bool_verbose :bool, str_inputs_url :str, dict_get_headers :dic
     return True
 
 def get_list_all_index_sets_ids(str_indexsets_url :str, dict_get_headers: dict) -> list:
-    """src.clean.get_list_all_index_sets_ids function"""
+    """Function:get_list_all_index_sets_ids"""
     list_all_index_ids = []
     try:
         response_list_indexsets = requests.get(str_indexsets_url, headers=dict_get_headers, timeout=3)
@@ -150,7 +150,7 @@ def get_list_all_index_sets_ids(str_indexsets_url :str, dict_get_headers: dict) 
     return list_all_index_ids
 
 def get_list_all_builtin_index_set_ids(str_indexsets_url :str,dict_get_headers :dict,list_builtin_index_names: list) -> list:
-    """src.clean.get_list_all_builtin_index_set_ids function"""
+    """Function:get_list_all_builtin_index_set_ids"""
     list_builtin_indexids = []
     try:
         for str_index_name in list_builtin_index_names:
@@ -173,7 +173,7 @@ def get_list_all_builtin_index_set_ids(str_indexsets_url :str,dict_get_headers :
 
 def gen_list_index_set_names_to_delete(str_indexsets_url :str, dict_get_headers :dict,
     list_index_set_ids_to_delete: list) -> list:
-    """src.clean.gen_list_index_set_names_to_delete function"""
+    """Function:gen_list_index_set_names_to_delete"""
     list_index_set_names_to_delete = []
     try:
         for str_index_id in list_index_set_ids_to_delete:
@@ -194,7 +194,7 @@ def gen_list_index_set_names_to_delete(str_indexsets_url :str, dict_get_headers 
 
 def remove_indexsets(bool_verbose :bool, str_indexsets_url :str, dict_get_headers :dict, dict_post_headers :dict,
     list_builtin_index_names :list) -> bool:
-    """src.clean.remove_indexsets function"""
+    """Function:remove_indexsets"""
     list_all_index_set_ids = [] # all index_set ids
     list_builtin_index_set_ids = [] # all builtin index_set ids
     list_index_set_ids_to_delete = [] # index_set ids without builtin list

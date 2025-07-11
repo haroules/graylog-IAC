@@ -1,4 +1,4 @@
-""" global_vars module """
+"""Module:global_vars"""
 
 # intialize to empty - they get assigned in gralog_helpers:set_global_vars
 BOOL_VERBOSE = ""

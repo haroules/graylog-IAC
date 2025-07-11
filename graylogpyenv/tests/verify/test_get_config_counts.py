@@ -1,38 +1,38 @@
-"""tests.verify test_get_config_counts module"""
+"""Module:tests.verify.test_get_config_counts"""
+import os
 import pytest
 
 from src.verify import get_config_counts
 from tests.common.test_common import static_outs
-from tests.verify.test_verify_common import create_sample_schema_config_dir
-from tests.verify.test_verify_common import create_sample_template_config_dir
-from tests.verify.test_verify_common import mocked_config_tmppaths
 from tests.common.test_common import shared_asserts
+from tests.common.test_common import BOOL_VERBOSE_TRUE
 
-MOCK_BOOL_VERBOSE = True
+CWD = os.getcwd()
+XTRCTRCONFIGDIR = CWD + "/tests/test-configs/extractors"
+HOSTCONFIGDIR = CWD + "/tests/test-configs/host-config"
+INDEXCONFIGDIR = CWD + "/tests/test-configs/indices"
+INPUTCONFIGDIR = CWD + "/tests/test-configs/inputs"
+STREAMCONFIGDIR = CWD + "/tests/test-configs/streams"
+SCHEMACONFIGDIR = CWD + "/tests/test-configs/schemas"
+HOSTTEMPLATEDIR = CWD + "/tests/test-configs/hosttemplate"
 
-def test_get_config_counts_verbose_pass(tmp_path,capsys) -> None:
-    """tests.verify.test_get_config_counts_verbose_pass function"""
-    hostconfigdir,extrctrconfigdir,indexconfigdir,inputsconfigdir,streamconfigdir = mocked_config_tmppaths(tmp_path)
-    hosttemplatedir=create_sample_template_config_dir(tmp_path,"config-0")
-    schemaconfigdir=create_sample_schema_config_dir(tmp_path,"config-6")
-    return_val = get_config_counts(MOCK_BOOL_VERBOSE,[hostconfigdir,hosttemplatedir,
-                    extrctrconfigdir,indexconfigdir,inputsconfigdir,streamconfigdir,
-                    schemaconfigdir],hostconfigdir,hosttemplatedir,extrctrconfigdir,
-                    indexconfigdir,inputsconfigdir,streamconfigdir,schemaconfigdir)
+def test_get_config_counts_verbose_pass(capsys) -> None:
+    """Function:test_get_config_counts_verbose_pass"""
+    return_val = get_config_counts(BOOL_VERBOSE_TRUE,[HOSTCONFIGDIR,HOSTTEMPLATEDIR,
+                    XTRCTRCONFIGDIR,INDEXCONFIGDIR,INPUTCONFIGDIR,STREAMCONFIGDIR,
+                    SCHEMACONFIGDIR],HOSTCONFIGDIR,HOSTTEMPLATEDIR,XTRCTRCONFIGDIR,
+                    INDEXCONFIGDIR,INPUTCONFIGDIR,STREAMCONFIGDIR,SCHEMACONFIGDIR)
     captured = capsys.readouterr()
     expected_output = static_outs()
     assert captured.out == expected_output
-    assert return_val == 8
+    assert return_val == 7
 
-def test_get_config_counts_fail_oserror(tmp_path,capsys) -> None:
-    """tests.verify.test_get_config_counts_fail_oserror function"""
-    hostconfigdir,extrctrconfigdir,indexconfigdir,inputsconfigdir,streamconfigdir = mocked_config_tmppaths(tmp_path)
-    hosttemplatedir=create_sample_template_config_dir(tmp_path,"config-0")
-    schemaconfigdir=create_sample_schema_config_dir(tmp_path,"config-6")
+def test_get_config_counts_fail_oserror(capsys) -> None:
+    """Function:test_get_config_counts_fail_oserror"""
     with pytest.raises(SystemExit) as e:
-        get_config_counts(MOCK_BOOL_VERBOSE,[hostconfigdir,extrctrconfigdir,indexconfigdir,
-            streamconfigdir,schemaconfigdir],"bad_path",hosttemplatedir,extrctrconfigdir,
-            indexconfigdir,inputsconfigdir,streamconfigdir,schemaconfigdir)
+        get_config_counts(BOOL_VERBOSE_TRUE,[HOSTCONFIGDIR,XTRCTRCONFIGDIR,INDEXCONFIGDIR,
+            STREAMCONFIGDIR,SCHEMACONFIGDIR],"bad_path",HOSTTEMPLATEDIR,XTRCTRCONFIGDIR,
+            INDEXCONFIGDIR,INPUTCONFIGDIR,STREAMCONFIGDIR,SCHEMACONFIGDIR)
     captured = capsys.readouterr()
     message = "[ERROR] An OSError occurred in get_config_counts:"
     expected_output = (

@@ -1,4 +1,4 @@
-"""tests.helpers test_common module"""
+"""Module:tests.helpers.test_common"""
 import pytest
 
 from src.helpers import remove_sublists
@@ -6,7 +6,7 @@ from src.helpers import usage
 from tests.common.test_common import shared_asserts
 
 def test_clean_usage_output(capsys) -> None:
-    """tests.helpers.test_clean_usage_output function"""
+    """Function:test_clean_usage_output"""
     usage(["graylog_clean.py"])
     captured = capsys.readouterr()
     expected_output = (
@@ -20,7 +20,7 @@ def test_clean_usage_output(capsys) -> None:
     assert captured.out == expected_output
 
 def test_setup_usage_output(capsys) -> None:
-    """tests.helpers.test_setup_usage_output function"""
+    """Function:test_setup_usage_output"""
     usage(["graylog_setup.py"])
     captured = capsys.readouterr()
     expected_output = (
@@ -33,7 +33,7 @@ def test_setup_usage_output(capsys) -> None:
     assert captured.out == expected_output
 
 def test_verify_usage_output(capsys) -> None:
-    """tests.helpers.test_verify_usage_output function"""
+    """Function:test_verify_usage_output"""
     usage(["graylog_verify.py"])
     captured = capsys.readouterr()
     expected_output = (
@@ -44,14 +44,14 @@ def test_verify_usage_output(capsys) -> None:
     assert captured.out == expected_output
 
 def test_remove_sublists_pass() -> None:
-    """tests.helpers.test_remove_sublists_pass function"""
+    """Function:test_remove_sublists_pass"""
     sub_list = ["item one", "item two"]
     main_list = ["item one", "item two", "item_three", "item_four"]
     result = remove_sublists(main_list,sub_list)
     assert result == ["item_three", "item_four"]
 
 def test_remove_sublists_fail_no_elements_to_remove(capsys) -> None:
-    """tests.helpers.test_remove_sublists_fail_no_elements_to_remove function"""
+    """Function:test_remove_sublists_fail_no_elements_to_remove"""
     sub_list = ["item one", "item two"]
     main_list = ["item one", "item two"]
     with pytest.raises(SystemExit) as e:
@@ -61,7 +61,7 @@ def test_remove_sublists_fail_no_elements_to_remove(capsys) -> None:
     shared_asserts(captured.out,expected_output,e.value.code,e.type)
 
 def test_remove_sublists_fail_nothing_removed(capsys) -> None:
-    """tests.helpers.test_remove_sublists_fail_nothing_removed function"""
+    """Function:test_remove_sublists_fail_nothing_removed"""
     sub_list = ["item one", "item two"]
     main_list = ["item three", "item four", "item five"]
     with pytest.raises(SystemExit) as e:

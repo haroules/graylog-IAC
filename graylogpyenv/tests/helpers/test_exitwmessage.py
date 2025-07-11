@@ -1,11 +1,11 @@
-"""tests.helpers test_exit_wmessage module"""
+"""Module:tests.helpers.test_exit_wmessage"""
 import pytest
 
 from src.helpers import exit_with_message
 from tests.common.test_common import shared_asserts
 
 def test_exit_wmessage_pass_output_returncode(capsys) -> None:
-    """tests.helpers.test_exit_wmessage_pass_output_returncode function"""
+    """Function:test_exit_wmessage_pass_output_returncode"""
     with pytest.raises(SystemExit) as e:
         exit_with_message("Test message from exit with message",1)
     captured = capsys.readouterr()

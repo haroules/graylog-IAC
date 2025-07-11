@@ -1,0 +1,13 @@
+[{
+    "index_config_file":"index_samplehost.json",
+    "index_title":"samplehost-default-index",
+    "input_config_file":"input_samplehost.json",
+    "input_title":"samplehost-input",
+    "extractors_total":1,
+    "extractors":[{
+        "extractor_config_file" :"xtrctr_samplehost.json",
+        "extractor_title" : "samplehost_extractor"
+    }],
+    "stream_config_file":"stream_samplehost.json",
+    "stream_title":"samplehost-stream"
+}]

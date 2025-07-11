@@ -48,7 +48,7 @@ fail-under=10
 #from-stdin=
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore=CVS
+ignore=CVS,docstrings.py
 
 # Add files or directories matching the regular expressions patterns to the
 # ignore-list. The regex matches against paths and can be in Posix or Windows
@@ -75,7 +75,7 @@ ignored-modules=
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use, and will cap the count on Windows to
 # avoid hangs.
-jobs=1
+jobs=0
 
 # Control the amount of potential inferred values when inferring a single
 # object. This can help the performance when dealing with large functions or
@@ -292,7 +292,7 @@ exclude-too-few-public-methods=
 ignored-parents=
 
 # Maximum number of arguments for function / method.
-max-args=15
+max-args=10
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7
@@ -383,7 +383,7 @@ ext-import-graph=
 # Output a graph (.gv or any supported image format) of all (i.e. internal and
 # external) dependencies to the given file (report RP0402 must not be
 # disabled).
-import-graph=
+import-graph=dependencies.gv
 
 # Output a graph (.gv or any supported image format) of internal dependencies
 # to the given file (report RP0402 must not be disabled).
@@ -431,16 +431,16 @@ confidence=HIGH,
 # --enable=similarities". If you want to run only the classes checker, but have
 # no Warning level messages displayed, use "--disable=all --enable=classes
 # --disable=W".
-disable=raw-checker-failed,
-        bad-inline-option,
-        locally-disabled,
-        file-ignored,
-        suppressed-message,
-        useless-suppression,
-        deprecated-pragma,
-        use-symbolic-message-instead,
-        use-implicit-booleaness-not-comparison-to-string,
-        use-implicit-booleaness-not-comparison-to-zero
+#disable=raw-checker-failed,
+        #bad-inline-option,
+        #locally-disabled,
+        #file-ignored,
+        #suppressed-message,
+        #useless-suppression,
+        #deprecated-pragma,
+        #use-symbolic-message-instead,
+        #use-implicit-booleaness-not-comparison-to-string,
+        #use-implicit-booleaness-not-comparison-to-zero
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option

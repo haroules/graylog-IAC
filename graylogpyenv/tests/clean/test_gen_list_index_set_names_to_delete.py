@@ -1,26 +1,25 @@
-"""tests.clean test_gen_list_index_set_names_to_delete module"""
+"""Module:tests.clean.test_gen_list_index_set_names_to_delete"""
 import json
 from unittest.mock import Mock
 import requests
 import pytest
+
 from src.clean import gen_list_index_set_names_to_delete
+from tests.common.test_common import mock_get_response
+from tests.common.test_common import MOCK_STR_INDEXSETS_URL
+from tests.common.test_common import MOCK_DICT_GET_HEADERS
 
 MOCK_JQ_RETURN = ["index1"]
-MOCK_STR_INDEXSETS_URL = "http://test-url.com/index_sets"
-MOCK_DICT_GET_HEADERS = {"Authorization": "Bearer token"}
 MOCK_LIST_INDEX_SET_IDS_TO_DELETE = ["0001"]
 
 @pytest.fixture(autouse=True)
 def patch_common_dependencies(mocker) -> None:
-    """tests.clean.patch_common_dependencies function"""
+    """Function:patch_common_dependencies"""
     mocker.patch('src.clean.jq', return_value=MOCK_JQ_RETURN)
 
 def test_gen_list_index_set_names_to_delete_pass(mocker) -> None:
-    """tests.clean.test_gen_list_index_set_names_to_delete_pass function"""
-    mock_response = Mock()
-    mock_response.status_code = 200
-    mock_response.text = '{"title": "index1"}'
-    mock_response.raise_for_status = Mock()
+    """Function:test_gen_list_index_set_names_to_delete_pass"""
+    mock_response = mock_get_response(200,'{"title": "index1"}')
     mocker.patch('requests.get', return_value=mock_response)
     mocker.patch('json.loads', return_value=json.loads(mock_response.text))
     result = gen_list_index_set_names_to_delete( MOCK_STR_INDEXSETS_URL,MOCK_DICT_GET_HEADERS,MOCK_LIST_INDEX_SET_IDS_TO_DELETE)
@@ -52,7 +51,7 @@ def test_gen_list_index_set_names_to_delete_pass(mocker) -> None:
 def test_gen_list_index_set_names_to_delete_failures(
     mocker, capsys, requests_get_behavior, json_loads_behavior,
     expected_output, exit_code) -> None:
-    """tests.clean.test_gen_list_index_set_names_to_delete_failures function"""
+    """Function:test_gen_list_index_set_names_to_delete_failures"""
     if isinstance(requests_get_behavior, Exception):
         mocker.patch('requests.get', side_effect=requests_get_behavior)
     else:
@@ -65,7 +64,7 @@ def test_gen_list_index_set_names_to_delete_failures(
         gen_list_index_set_names_to_delete(MOCK_STR_INDEXSETS_URL,MOCK_DICT_GET_HEADERS,MOCK_LIST_INDEX_SET_IDS_TO_DELETE)
         mock_exit.assert_called_once_with(exit_code)
     else:
-        with exit_code:  # Expected to be pytest.raises(SystemExit)
+        with exit_code:
             gen_list_index_set_names_to_delete(MOCK_STR_INDEXSETS_URL,MOCK_DICT_GET_HEADERS,MOCK_LIST_INDEX_SET_IDS_TO_DELETE)
         captured = capsys.readouterr()
         assert captured.out == expected_output

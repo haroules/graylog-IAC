@@ -1,0 +1,17 @@
+{
+    "hostname" : "samplehost",
+    "config_sets_total" : 1,
+    "config_sets" : [{
+    "index_config_file":"index_samplehost.json",
+    "index_title":"samplehost_title",
+    "input_config_file":"input_samplehost.json",
+    "input_title":"samplehost_title",
+    "extractors_total":2,
+    "extractors":[{
+        "extractor_config_file" :"extractor.json",
+        "extractor_title" : "some_extractor"
+    }],
+    "stream_config_file":"config_0.json",
+    "stream_title":"samplehost_stream"
+    }]
+}

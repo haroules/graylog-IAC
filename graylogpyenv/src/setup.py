@@ -1,4 +1,4 @@
-"""src.setup module"""
+"""Module:src.setup"""
 import os
 import json
 from typing import Union
@@ -9,19 +9,12 @@ from src.helpers import exit_with_message
 from src.helpers import contains_sublist
 import global_vars
 
-# pyjq doesn't compile for python3, jqpy python binding only has filter not replace
-# going with pythonbinding vs systemcall
-# sometimes its less code to use jq vs python dict elements (you will see both approaches used if your wonering why)
-
 def get_list_config_files(bool_verbose :bool, str_pth_cfg :str, object_type :str) -> list:
-    """src.setup.get_list_config_files function"""
-    # create a list of config files
-    # by iterating over files in directory passed to the function
-    # verify the list has at least one file
-    str_config_file = "" # loop variable
-    str_config_file_path = "" # built path to config file
-    list_config_files = [] # list of paths for definition files
-    int_config_file_count = 0 # count of config files found
+    """Function:get_list_config_files"""
+    str_config_file = ""
+    str_config_file_path = ""
+    list_config_files = []
+    int_config_file_count = 0
     try:
         for str_config_file in os.listdir(str_pth_cfg):
             str_config_file_path = os.path.join(str_pth_cfg, str_config_file)
@@ -36,19 +29,14 @@ def get_list_config_files(bool_verbose :bool, str_pth_cfg :str, object_type :str
     return list_config_files
 
 def create_indices(bool_verbose :bool,str_pth_indices_cfg :str,
-                   str_indexsets_url :str, dict_post_headers :dict) -> None:
-    """src.setup.create_indices function"""
-    # build list of definition files in directory and count them
-    # exit if directory doesn't exist or minimal validation of config files fails with exception handlers
-    # iterate over generated list creating index one at a time
-    # api/system won't allow you to create index dupes so check request for return code
-    # therefore we don't check to see if index already exists before trying to create it
-    str_index_id = "" # id of created index parsed from json response
-    str_index_name = ""  # title of created index parsed from json response
-    str_index_input_file = "" # loop variable
-    int_index_processed_count = 0 # count of index ops processed
-    dict_index_config = {} # dictionary of config file loaded from json
-    list_index_input_files = [] # list of indexfiles returned from function get
+    str_indexsets_url :str, dict_post_headers :dict) -> None:
+    """Function:create_indices"""
+    str_index_id = ""
+    str_index_name = ""
+    str_index_input_file = ""
+    int_index_processed_count = 0
+    dict_index_config = {}
+    list_index_input_files = []
 
     print("Processing indexes")
     try:
@@ -81,20 +69,16 @@ def create_indices(bool_verbose :bool,str_pth_indices_cfg :str,
         exit_with_message(f"[ERROR] Request error in create indices: {e}",1)
     print("[Done] processing indexes.\n")
 
-def update_nodeid_in_input_config_files(bool_verbose :bool, list_input_config_files: list
-                                        , str_node_id_url: str, dict_get_headers: dict) -> None:
-    """src.setup.update_nodeid_in_input_config_files function"""
-    # get node id from api
-    # iterate through list of input files passed to function
-    # json load content from input file from list
-    # replace node id
-    # dump json back to file
-    node_id_response = ""       # json response from api call to get node id from cluster
-    node_id = []                # jq query of node id from json response
-    str_input_file_path = ""    # loop iterable containing path to input config file to be updated
-    str_input_file_content = "" # contains json content from input config file
-    str_node_id = ""            # convert jq list response to string
-    input_json_content = ""     # contains json from input config file content
+def update_nodeid_in_input_config_files(bool_verbose :bool, list_input_config_files: list,
+    str_node_id_url: str, dict_get_headers: dict) -> None:
+    """Function:update_nodeid_in_input_config_files"""
+
+    node_id_response = ""
+    node_id = []
+    str_input_file_path = ""
+    str_input_file_content = ""
+    str_node_id = ""
+    input_json_content = ""
     try:
         node_id_response = requests.get(str_node_id_url, headers=dict_get_headers, timeout=3)
         node_id_response.raise_for_status()
@@ -125,7 +109,7 @@ def update_nodeid_in_input_config_files(bool_verbose :bool, list_input_config_fi
         exit_with_message(f"[ERROR] Request error in update_nodeid_in_input_config_files: {e}",1)
 
 def gen_list_inputs_titles(str_inputs_url: str, dict_get_headers: dict) -> list:
-    """src.setup.gen_list_inputs_titles function"""
+    """Function:gen_list_inputs_titles"""
     try:
         inputs_get_response = ""    #api response object to get list of inputs
         titlesfound = []
@@ -142,14 +126,14 @@ def gen_list_inputs_titles(str_inputs_url: str, dict_get_headers: dict) -> list:
     return titlesfound
 
 def gen_list_inputs_to_create(bool_verbose :bool, list_input_config_files: list,
-                              str_inputs_url: str, dict_get_headers: dict) -> list:
-    """src.setup.gen_list_inputs_to_create function"""
+    str_inputs_url: str, dict_get_headers: dict) -> list:
+    """Function:gen_list_inputs_to_create"""
 
-    str_input_file_path = ""    # loop iterable containing input file path from list of input config files
-    input_json_content = ""     # contains json from input config file
-    input_name_json = []        # jq query returns title from input config file json
-    input_titles_found = []            # list object containing jq query of input title
-    list_inputs_to_create = []  # list object of all inputs that don't already exist
+    str_input_file_path = ""
+    input_json_content = ""
+    input_name_json = []
+    input_titles_found = []
+    list_inputs_to_create = []
     try:
         input_titles_found = gen_list_inputs_titles(str_inputs_url, dict_get_headers)
         for str_input_file_path in list_input_config_files:
@@ -169,20 +153,16 @@ def gen_list_inputs_to_create(bool_verbose :bool, list_input_config_files: list,
     return list_inputs_to_create
 
 def create_inputs(bool_verbose :bool, str_pth_inputs_cfg :str, str_node_id_url :str,
-                  str_inputs_url :str, dict_get_headers :dict, dict_post_headers :dict) -> None:
-    """src.setup.create_inputs function"""
-    # copies of config file content could create havoc (two inputs with same config)
-    # api/system won't stop you from re-creating inputs with the same name or configuration...
-    # build list of definition files in directory and count them
-    # exit if directory doesn't exist or minimal validation of config files fails
-    # iterate over generated list creating inputs one at a time if they dont already exist
-    list_input_config_files = []    # list of input config file paths
-    list_inputs_to_create = []      # list of inputs that have existing ones removed
-    str_input_file_path = ""        # loop iterable that holds path to config file to be updated
-    str_input_file_content = ""     # contains content of config file
-    input_json_content = ""         # contains json of input content
-    inputs_post_response = ""       # response of post of config file to api
-    json_created_input_id = []      # jq query of response text showing new id of input created
+    str_inputs_url :str, dict_get_headers :dict, dict_post_headers :dict) -> None:
+    """Function:create_inputs"""
+
+    list_input_config_files = []
+    list_inputs_to_create = []
+    str_input_file_path = ""
+    str_input_file_content = ""
+    input_json_content = ""
+    inputs_post_response = ""
+    json_created_input_id = []
     print("Processing inputs")
     try:
         list_input_config_files=get_list_config_files(bool_verbose, str_pth_inputs_cfg, "input")
@@ -212,22 +192,11 @@ def create_inputs(bool_verbose :bool, str_pth_inputs_cfg :str, str_node_id_url :
         exit_with_message(f"[ERROR] Request error in create inputs: {e}",1)
 
 def create_static_fields(bool_verbose :bool, str_inputs_url :str, dict_get_headers :dict, dict_post_headers :dict) -> None:
-    """src.setup.create_static_fields function"""
-    # add static field to input one static field per input
-    # Need inputs, otherwise something wrong, won't be able to process other creations
-    # unlikely to occur (previous steps would fail) unless someone edits ui while
-    # script processing and deletes inputs
-    # its an extra step which would be nice if we could just include with the input creation json...
-    # used static field since multiple input(types) from the same host in my stream rules
-    # get list of titles/ID's from api
-    # build json payload
-    # iterate through list add static field titled "input" that matches the "title of the input"
-    # no need to check if static field already exists. it appears to overwrite based on evidence in logs
-    # check count of inputs matches ceation count
-    json_titles_found = "" # key/val pair of title/id
-    str_static_field_url = "" # relative url for modify static fileld of input built on the fly
-    json_static_payload = "" # jason payload describing static field built on the fly
-    json_inputs_count = "" # count of inputs found parsing json response
+    """Function:create_static_fields"""
+    json_titles_found = ""
+    str_static_field_url = ""
+    json_static_payload = ""
+    json_inputs_count = ""
 
     print("Processing static fields")
     try:
@@ -260,11 +229,7 @@ def create_static_fields(bool_verbose :bool, str_inputs_url :str, dict_get_heade
         exit_with_message(f"[ERROR] Request error in create_static_fields: {e}",1)
 
 def gen_list_host_config_sets(bool_verbose :bool, str_pth_host_cfg_dir :str, str_path_host_config_file :str) -> list:
-    """src.setup.gen_list_host_config_sets function"""
-    # read in list of host config files
-    # for each config file load json content to dictionary
-    # jq to get extractor_total from each config set and increment count from extractor total
-    # send back config set from config file
+    """Function:gen_list_host_config_sets"""
     int_total_xtrctrs_in_configfile = 0
     str_full_pth_host_cfg_file = ""
     dict_host_config = []
@@ -287,10 +252,7 @@ def gen_list_host_config_sets(bool_verbose :bool, str_pth_host_cfg_dir :str, str
     return jq('.config_sets[]',dict_host_config)
 
 def gen_list_extractor_details(host_config_set: list, str_inputs_url :str, dict_get_headers :dict) -> list:
-    """src.setup.gen_list_extractor_details function"""
-    # get total extractor count defined in config set if none, we do nothing.
-    # not all inputs have extractors necessarily
-    # if there are extractors we send back a list containing inputid, input title, and config files
+    """Function:gen_list_extractor_details"""
     int_tot_xtrctrs_in_configset = 0
     str_input_title =[]
     list_extractor_config_files = []
@@ -322,11 +284,7 @@ def gen_list_extractor_details(host_config_set: list, str_inputs_url :str, dict_
 
 def check_extractor_exists(bool_verbose :bool, extractor_id :str,
         extractor_file :str, str_inputs_url :str, dict_get_headers : dict) -> Union [ bool, str ]:
-    """src.setup.check_extractor_exists function"""
-    # get list of all extractors from api endpoint
-    # open config file and get title of extractor
-    # add extractor titles to list of extractors from config file
-    # if extractor from config file already exists return true, otherwise return title of extractor
+    """Function:check_extractor_exists"""
     str_get_xtractr_by_id_url = ""
     get_xtractr_response = ""
     str_xtrctr_title = []
@@ -355,14 +313,7 @@ def check_extractor_exists(bool_verbose :bool, extractor_id :str,
 
 def create_extractors(bool_verbose :bool, str_pth_extrctr_cfg :str, str_pth_host_cfg_dir :str, str_inputs_url :str,
         dict_get_headers :dict, dict_post_headers :dict) -> None:
-    """src.setup.create_extractors function"""
-    # get list of extractors for an input from host config file
-    # get count of extractors staticly defined
-    # if extractor total for a config set is 0 skip
-    # if not get list of extractors and input title from config set
-    # make sure doesn't already exist comparing against list we create of ones that already do exist
-    # host config file may have one or more config sets
-    # each config set may have 0 or more extractors
+    """Function:create_extractors"""
     print("Processing extractors")
     try:
         if bool_verbose:
@@ -398,10 +349,7 @@ def create_extractors(bool_verbose :bool, str_pth_extrctr_cfg :str, str_pth_host
         exit_with_message(f"[ERROR] There was a problem decoding json in create_extractors: {e}",1)
 
 def gen_list_host_config_files(bool_verbose :bool, str_pth_host_cfg_dir :str) -> list:
-    """src.setup.gen_list_host_config_files function"""
-    # get list of extractors for an input f
-    # get list of host config files in directory
-    # add full path to host config and return as a list
+    """Function:gen_list_host_config_files"""
     list_host_config_files = []
     try:
         for str_path_host_config_file in os.listdir(str_pth_host_cfg_dir):
@@ -415,15 +363,7 @@ def gen_list_host_config_files(bool_verbose :bool, str_pth_host_cfg_dir :str) ->
 
 def update_index_id_in_stream_config_file(bool_verbose :bool, host_config_file :str, str_pth_streams_cfg :str,
         str_indexsets_url :str, dict_get_headers :dict) -> None:
-    """src.setup.update_index_id_in_stream_config_file function"""
-    # get list of host config files
-    # get list of config sets from host files
-    # get index title and path to stream config file
-    # search for list of index sets by title
-    # get id for each index set
-    # load stream config file
-    # update the id in the json
-    # dump json back to file
+    """Function:update_index_id_in_stream_config_file"""
     try:
         with open(host_config_file, "r", encoding="utf-8") as hostconfigfile:
             dict_host_config=json.load(hostconfigfile)
@@ -459,12 +399,7 @@ def update_index_id_in_stream_config_file(bool_verbose :bool, host_config_file :
         exit_with_message(f"[ERROR] There was a problem decoding json in update_index_id_in_stream_config_file: {e}",1)
 
 def gen_list_streams_to_create(bool_verbose :bool, list_host_config_files :list, str_streams_url :str,dict_get_headers) -> list:
-    """src.setup.gen_list_streams_to_create function"""
-    # check if stream already exists
-    # get list of streams defined in host config files
-    # get list of all streams from api
-    # iterate list of stream definitions checking if in list of already existing
-    # add to new list if not in list of existing
+    """Function:gen_list_streams_to_create"""
     list_streams_to_create = []
     try:
         for host_config_file in list_host_config_files:
@@ -492,7 +427,7 @@ def gen_list_streams_to_create(bool_verbose :bool, list_host_config_files :list,
     return list_streams_to_create
 
 def start_stream(str_stream_id :str, str_streams_url :str, dict_post_headers :dict) -> None:
-    """src.setup.start_stream function"""
+    """Function:start_stream"""
     # newly created streams don't autostart, so start stream
     start_stream_url = str_streams_url + "/" + str_stream_id + "/resume"
     start_stream_response=requests.post(start_stream_url,headers=dict_post_headers, timeout=3)
@@ -501,7 +436,7 @@ def start_stream(str_stream_id :str, str_streams_url :str, dict_post_headers :di
 
 def create_streams(bool_verbose :bool,str_pth_streams_cfg :str, str_pth_host_cfg_dir :str, str_indexsets_url :str,
         str_streams_url :str, dict_get_headers :dict, dict_post_headers :dict) -> None:
-    """src.setup.create_streams function"""
+    """Function:create_streams"""
     print("Processing streams")
     try:
         int_strm_cfg_file_count = len(os.listdir(str_pth_streams_cfg))
