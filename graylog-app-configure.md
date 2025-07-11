@@ -3,7 +3,6 @@
 <!-- TOC -->
 
 - [Populate configuration of graylog app](#populate-configuration-of-graylog-app)
-    - [Introduction and approach](#introduction-and-approach)
     - [Setup and run shell scripts method](#setup-and-run-shell-scripts-method)
         - [To run shell scripts method requires installing jq, curl,](#to-run-shell-scripts-method-requires-installing-jq-curl)
         - [Create scripts based on examples provided in source pack and execute](#create-scripts-based-on-examples-provided-in-source-pack-and-execute)
@@ -11,24 +10,11 @@
             - [b. Set up env vars for script runs and execute scripts assuming you tailored to your environment](#b-set-up-env-vars-for-script-runs-and-execute-scripts-assuming-you-tailored-to-your-environment)
     - [Setup python virtualenv and execute python scripts method](#setup-python-virtualenv-and-execute-python-scripts-method)
         - [To run creation/cleanup python scripts method requires installing jq and python virtualenv](#to-run-creationcleanup-python-scripts-method-requires-installing-jq-and-python-virtualenv)
-        - [Run the python scripts in virtual env](#run-the-python-scripts-in-virtual-env)
+        - [Run the python scripts in virtual env and other tools](#run-the-python-scripts-in-virtual-env-and-other-tools)
     - [How to send syslog messages to test input](#how-to-send-syslog-messages-to-test-input)
 
 <!-- /TOC -->
 
-## Introduction and approach
-There are three possible ways to configure the app in this example.
-1. Introductory: Web UI manually
-2. Intermediate: Example shell scripts that do curl calls to the API
-3. Blazing: Python scripts that will reuse config files shared by shell scripts
-
-Pros/Cons
-1. Web UI: Nice for figuring things out, not ideal for Infra As Code, Config As Code, Scalability.
-2. Standalone Shell Scripts: Easier to get started harder to maintain for lots of hosts, no error checking/validation.
-3. Python venv: Scales faster, error detection/validation, allows for idempotency of runs, extra initial setup.
-4. Approaches 2 and 3 would require update if API changes
-
-Helpful Hint using API<br>
 **The graylog rest api browser (swagger) is very helpful for writing/testing/validating the curl and python methods**<br>
 **There's a link to it from the UI or go to the following url that corresponds to your host**<br>
 **ex: http://192.168.1.2:9000/api/api-browser/global/index.html**
@@ -91,7 +77,7 @@ sudo apt install -y jq python3-virtualenv
 or
 sudo yum install -y jq python3-virtualenv
 ```
-### 3. Run the python scripts in virtual env
+### 3. Run the python scripts in virtual env and other tools
 1. Setup the python virtualenv in parent folder above graylogpyenv folder
 ```
 virtualenv graylogpyenv
@@ -145,8 +131,14 @@ pyclean .
 ```
 pylint --recursive=y --generate-rcfile > .pylintrc
 add init-hook='import sys; sys.path.append(".")' to .pylintrc
-pylint --errors-only --recursive=y .
+pylint . --verbose --reports=y
+dot -Tpng dependencies.gv -o imports_all.png (for dependency graph, assumes graphviz installed)
 
+```
+8. docstrings
+```
+To generate an output of all the docstrings:
+python3 docstrings.py
 ```
 ## How to send syslog messages to test input
 1. Example with graylog app running on host 192.168.1.2 and you want to send a message from another host or docker host itself
